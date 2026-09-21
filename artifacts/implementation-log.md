@@ -76,3 +76,22 @@ external-interface deviations. The authoritative build requirements remain in
 - Updated contracts and oracle required-tool metadata test-first. The simulator, dataset,
   prompts, Jev questions/state, agents, telemetry, mocks, and documentation will consume
   this corrected interface in their normal checkpoints.
+
+## CP-03 — Simulator — 2026-09-21
+
+- Added isolated per-case simulator state, deterministic system-independent replacement
+  IDs, all five trusted read tools, five terminal action tools, failure plans, exactly-one
+  automatic retry for `temporary_error`, explicit persistent errors, and nanosecond tool
+  telemetry.
+- `get_customer_risk` is the only read response containing prior-refund count or trusted
+  conflict; tests verify those keys are absent from tracking and other unrelated outputs.
+- Action tools validate schema, visible identity, and terminal uniqueness only. A
+  deliberately wrong refund executes without consulting the oracle, preserving observable
+  policy failures.
+- RED evidence: four simulator test modules failed collection because simulator modules
+  did not exist.
+- `uv run pytest tests/unit/simulator tests/integration/test_simulator_replay.py -v`:
+  PASS, 14 tests.
+- `uv run pytest -q`: PASS, 73 tests.
+- `uv run ruff check .`: PASS.
+- `git diff --check`: PASS.

@@ -17,6 +17,7 @@ artifacts/runs/
 artifacts/analysis/
 artifacts/plots/
 artifacts/budget/
+artifacts/preflight/private/
 
 data/test/
 public/

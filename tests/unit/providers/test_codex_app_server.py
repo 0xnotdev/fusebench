@@ -76,7 +76,9 @@ class TerraTransport:
                 },
                 "model": "gpt-5.6-terra",
                 "reasoningEffort": "medium",
+                "activePermissionProfile": {"id": copied["params"]["permissions"]},
                 "approvalPolicy": "never",
+                "runtimeWorkspaceRoots": copied["params"]["runtimeWorkspaceRoots"],
                 "sandbox": {"type": "readOnly", "networkAccess": False},
             }
         elif method == "turn/start":
@@ -276,6 +278,9 @@ async def test_fresh_thread_and_turn_are_strictly_configured(tmp_path: Path) -> 
     result = await provider.turn(first, "visible case JSON")
 
     assert first.thread_id != second.thread_id
+    assert first.permission_profile == ":read-only"
+    assert first.effective_sandbox == {"type": "readOnly", "networkAccess": False}
+    assert first.runtime_workspace_roots == ((tmp_path / "case-1").resolve(),)
     thread_request = next(
         item for item in transport.sent if item.get("method") == "thread/start"
     )
@@ -287,17 +292,15 @@ async def test_fresh_thread_and_turn_are_strictly_configured(tmp_path: Path) -> 
         "dynamicTools": terra_read_tool_definitions(),
         "ephemeral": True,
         "model": "gpt-5.6-terra",
+        "permissions": ":read-only",
         "runtimeWorkspaceRoots": [str((tmp_path / "case-1").resolve())],
-        "sandbox": "read-only",
         "serviceName": "fusebench",
     }
     turn_request = next(item for item in transport.sent if item.get("method") == "turn/start")
     assert turn_request["params"]["effort"] == "medium"
     assert turn_request["params"]["model"] == "gpt-5.6-terra"
-    assert turn_request["params"]["sandboxPolicy"] == {
-        "type": "readOnly",
-        "networkAccess": False,
-    }
+    assert turn_request["params"]["permissions"] == ":read-only"
+    assert "sandboxPolicy" not in turn_request["params"]
     assert turn_request["params"]["outputSchema"] == terra_output_schema()
     assert isinstance(result.output, TerraFinalDecision)
     assert result.usage.input_tokens == 111

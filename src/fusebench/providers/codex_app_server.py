@@ -31,6 +31,43 @@ from fusebench.providers.codex_protocol import (
 TERRA_MODEL = "gpt-5.6-terra"
 TERRA_EFFORT = "medium"
 TERRA_TOOL_PROTOCOL = "dynamic_tools"
+FUSEBENCH_PERMISSION_PROFILE = ":read-only"
+
+
+def codex_app_server_command() -> tuple[str, ...]:
+    """Build App Server argv with all non-benchmark tool capabilities disabled."""
+
+    return (
+        "codex",
+        "app-server",
+        "--stdio",
+        "--disable",
+        "shell_tool",
+        "--disable",
+        "unified_exec",
+        "--disable",
+        "view_image",
+        "--disable",
+        "browser_use",
+        "--disable",
+        "browser_use_external",
+        "--disable",
+        "browser_use_full_cdp_access",
+        "--disable",
+        "computer_use",
+        "--disable",
+        "apps",
+        "--disable",
+        "plugins",
+        "--disable",
+        "skill_search",
+        "--disable",
+        "workspace_dependencies",
+        "--disable",
+        "multi_agent",
+        "--disable",
+        "multi_agent_v2",
+    )
 
 
 class TerraProviderError(RuntimeError):
@@ -116,6 +153,9 @@ class TerraSession(BaseModel):
     thread_id: str
     session_id: str
     case_sandbox: Path
+    permission_profile: Literal[":read-only"] = FUSEBENCH_PERMISSION_PROFILE
+    effective_sandbox: dict[str, Any]
+    runtime_workspace_roots: tuple[Path, ...]
     thread_start_effort: str | None = None
     model: Literal["gpt-5.6-terra"] = TERRA_MODEL
     effort: Literal["medium"] = TERRA_EFFORT
@@ -264,10 +304,12 @@ class CodexAppServerProvider:
     async def start(
         cls,
         *,
-        command: Sequence[str] = ("codex", "app-server", "--stdio"),
+        command: Sequence[str] | None = None,
         turn_timeout_seconds: float = 120.0,
     ) -> CodexAppServerProvider:
-        transport = await StdioJsonRpcTransport.start(command)
+        transport = await StdioJsonRpcTransport.start(
+            command if command is not None else codex_app_server_command()
+        )
         client = CodexProtocolClient(
             transport,
             request_timeout_seconds=turn_timeout_seconds,
@@ -347,8 +389,8 @@ class CodexAppServerProvider:
                 "dynamicTools": terra_read_tool_definitions(),
                 "ephemeral": True,
                 "model": self.model,
+                "permissions": FUSEBENCH_PERMISSION_PROFILE,
                 "runtimeWorkspaceRoots": [str(sandbox)],
-                "sandbox": "read-only",
                 "serviceName": "fusebench",
             },
         )
@@ -365,10 +407,30 @@ class CodexAppServerProvider:
         session_id = thread.get("sessionId")
         if not isinstance(thread_id, str) or not isinstance(session_id, str):
             raise TerraProviderError("thread/start omitted thread/session id")
+        active_profile = response.get("activePermissionProfile")
+        if (
+            not isinstance(active_profile, Mapping)
+            or active_profile.get("id") != FUSEBENCH_PERMISSION_PROFILE
+        ):
+            raise TerraProviderError(
+                "Codex did not activate the required read-only permission profile"
+            )
+        effective_sandbox = response.get("sandbox")
+        if (
+            not isinstance(effective_sandbox, Mapping)
+            or effective_sandbox.get("type") != "readOnly"
+            or effective_sandbox.get("networkAccess", False) is not False
+        ):
+            raise TerraProviderError("Codex did not activate read-only, network-off sandboxing")
+        reported_roots = response.get("runtimeWorkspaceRoots")
+        if not isinstance(reported_roots, list) or reported_roots != [str(sandbox)]:
+            raise TerraProviderError("Codex runtime workspace roots differ from case sandbox")
         return TerraSession(
             thread_id=thread_id,
             session_id=session_id,
             case_sandbox=sandbox,
+            effective_sandbox=dict(effective_sandbox),
+            runtime_workspace_roots=(sandbox,),
             thread_start_effort=(
                 reported_effort if isinstance(reported_effort, str) else None
             ),
@@ -404,7 +466,7 @@ class CodexAppServerProvider:
                     "input": [{"type": "text", "text": message}],
                     "model": self.model,
                     "outputSchema": terra_output_schema(),
-                    "sandboxPolicy": {"type": "readOnly", "networkAccess": False},
+                    "permissions": FUSEBENCH_PERMISSION_PROFILE,
                     "threadId": session.thread_id,
                 },
                 timeout_seconds=self.turn_timeout_seconds,

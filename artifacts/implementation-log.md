@@ -192,3 +192,41 @@ external-interface deviations. The authoritative build requirements remain in
 - `uv run pytest -q`: PASS, 125 tests; 2 explicitly deselected live tests.
 - `uv run ruff check .`: PASS.
 - CP-06 is complete.
+
+## CP-07 — Codex filesystem isolation — 2026-09-21
+
+- Added fresh per-case sandbox construction under `artifacts/case_sandboxes`, strict safe
+  path-component validation, resolved-root containment checks, and rejection of symlink or
+  Windows reparse-point components. Existing case directories are never reused.
+- Added a redacted isolation evaluator that detects canary/benchmark marker leakage and
+  records only hashes, booleans, and observed item types; raw attack output is not stored.
+- Initial live attack under App Server's built-in `:read-only` profile failed: Terra used a
+  command tool and read the randomized canary, decoy `ground_truth.py`, decoy
+  `cases.jsonl`, decoy `oracle.py`, the real dev dataset, and the real oracle. The failed
+  result was treated as a hard gate failure, not waived.
+- Investigated the official root-scoped permission-profile mechanism. Installed Windows
+  behavior cannot currently enforce it: elevated mode rejects profiles without effective
+  `:root` read, while unelevated mode explicitly refuses split filesystem read policies.
+  No broad root-read workaround was accepted.
+- Final isolation uses section 15.4's fully-disabled-shell path. App Server launches with
+  shell/unified execution, local file-view, browser/computer-use, apps/plugins, skill
+  search, workspace dependencies, and multi-agent feature surfaces disabled. The only
+  model-callable tools are the five client-run benchmark dynamic read tools. Turns retain
+  `:read-only`, approval `never`, one empty runtime workspace root, and network disabled.
+- The repeated live attack passed: no canary or benchmark content leaked, the model
+  reported all six protected paths unreadable, and event telemetry contained no command,
+  file, or web item. Sanitized evidence is in `artifacts/preflight/isolation.json`.
+- Re-ran the production Codex live contract after hardening: PASS; dynamic benchmark tools,
+  exact `gpt-5.6-terra`, medium turn effort, structured output, and usage telemetry remain
+  functional.
+- RED evidence: isolation tests initially failed collection because the isolation module
+  did not exist. The first real canary attack also failed as described above.
+- `uv run pytest tests/unit/providers/test_codex_protocol.py
+  tests/unit/providers/test_codex_app_server.py tests/unit/providers/test_isolation.py
+  -q`: PASS, 29 tests.
+- `uv run pytest tests/contract/test_codex_isolation_live.py -v -m live`: PASS, 1 test.
+- `uv run pytest tests/contract/test_codex_app_server_live.py -v -m live`: PASS, 1 test
+  after hardening.
+- `uv run pytest -q`: PASS, 136 tests; 3 explicitly deselected live tests.
+- `uv run ruff check .`: PASS.
+- CP-07 is complete; the freeze-blocking isolation gate is satisfied.

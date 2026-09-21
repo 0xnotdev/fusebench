@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     jev_hard_cap_usd: float = Field(default=1.0, gt=0)
     terra_model: str = "gpt-5.6-terra"
     terra_reasoning_effort: Literal["medium"] = "medium"
+    terra_tool_protocol: Literal["dynamic_tools"] = "dynamic_tools"
     fusebench_artifact_dir: Path = Path("artifacts")
     fusebench_log_level: str = "INFO"
 

@@ -157,3 +157,38 @@ external-interface deviations. The authoritative build requirements remain in
 - `uv run ruff check .`: PASS.
 - CP-05 is complete. No external-interface deviation from the researched SDK contract
   was required.
+
+## CP-06 — Codex App Server adapter — 2026-09-21
+
+- Revalidated the protocol against official OpenAI App Server documentation and generated
+  both stable and experimental JSON Schema bundles from installed `codex-cli
+  0.155.0-alpha.9.2`.
+- Stable v2 schema SHA-256:
+  `5a4d50ed04afa9cd1b383d011f67ec055960a35ca7fdeab222ed65e70fca8f0b`.
+- Experimental v2 schema SHA-256:
+  `48368bf71d00498557245665dd4581f9b0d5381561a2c8ba1ef4eb26ea4a1632`.
+- Added a strict JSONL JSON-RPC lifecycle client with initialize/initialized handshake,
+  monotonically increasing request IDs, response/notification/server-request routing,
+  process-death propagation, sanitized errors, timeouts, and no semantic retries.
+- Added exact account/model/effort preflight, fresh ephemeral case threads, read-only
+  sandboxes, network-disabled turns, output-schema parsing, usage-limit classification,
+  raw token-event capture, and model-reroute rejection.
+- Added all five isolated benchmark read tools as client-run dynamic tools, including the
+  corrected `get_customer_risk(customer_id)` interface. Tool requests are scoped to the
+  active thread/turn and arguments are validated before dispatch.
+- The required dynamic-tool probe passed, so `dynamic_tools` is selected for all dev and
+  future test runs. It must not be mixed with `structured_loop` after freeze.
+- Current-interface deviation: `thread/start` has no reasoning-effort request field and
+  reported the user's ambient `high` thread setting. FuseBench explicitly sends
+  `effort: medium` on every scored `turn/start`, which the live contract accepted. The
+  inherited thread value is retained as telemetry; no model or experimental invariant was
+  changed.
+- `uv run pytest tests/unit/providers/test_codex_protocol.py
+  tests/unit/providers/test_codex_app_server.py -v`: PASS, 18 tests.
+- `uv run pytest tests/contract/test_codex_app_server_live.py -v -m live`: PASS, 1
+  production-provider test against `gpt-5.6-terra` with a real dynamic-tool callback.
+- Live usage: 16,667 input tokens (16,128 cached), 77 output tokens, and 15 reasoning
+  output tokens. Sanitized evidence is in `artifacts/preflight/codex-contract.json`.
+- `uv run pytest -q`: PASS, 125 tests; 2 explicitly deselected live tests.
+- `uv run ruff check .`: PASS.
+- CP-06 is complete.

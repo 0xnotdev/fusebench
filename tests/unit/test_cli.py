@@ -1,5 +1,6 @@
 from typer.testing import CliRunner
 
+from fusebench.benchmark.preflight import PreflightCheck, PreflightReport
 from fusebench.cli import app
 
 
@@ -10,8 +11,40 @@ def test_cli_help_lists_preflight_command() -> None:
     assert "preflight" in result.stdout
 
 
-def test_unimplemented_checkpoint_command_fails_actionably() -> None:
+def test_preflight_command_writes_and_reports_passing_gate(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "fusebench.cli.execute_preflight",
+        lambda run_live: PreflightReport(
+            passed=True,
+            checks={"mock": PreflightCheck(passed=True, detail="ok")},
+        ),
+    )
+
     result = CliRunner().invoke(app, ["preflight"])
 
-    assert result.exit_code == 1
-    assert "CP-12" in result.stdout
+    assert result.exit_code == 0
+    assert "PASS" in result.stdout
+
+
+def test_dev_run_command_executes_both_systems(monkeypatch) -> None:
+    captured = {}
+
+    def fake_execute(**kwargs):
+        captured.update(kwargs)
+        return {
+            "run_id": kwargs["run_id"],
+            "completed": 120,
+            "scheduled": 120,
+            "stopped_for_usage_limit": False,
+        }
+
+    monkeypatch.setattr("fusebench.cli.execute_dev_evaluation", fake_execute)
+
+    result = CliRunner().invoke(
+        app,
+        ["dev-run", "--systems", "terra_only,terra_jev", "--run-id", "unit-dev"],
+    )
+
+    assert result.exit_code == 0
+    assert "120/120" in result.stdout
+    assert captured["systems"] == ("terra_only", "terra_jev")

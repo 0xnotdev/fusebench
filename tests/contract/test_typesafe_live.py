@@ -25,7 +25,14 @@ async def test_typesafe_live_contract_reports_model_answers_and_usage() -> None:
         questions={"works": provider.noul_question("Is the probe field present?")},
     )
 
+    provider.model = result.model
+    concrete_result = await provider.infer_raw(
+        state={"probe": "A concrete-model pinning check with no customer data."},
+        questions={"works": provider.noul_question("Is the probe field present?")},
+    )
+
     assert result.model
+    assert concrete_result.model == result.model
     assert result.usage.input_tokens is not None
     assert result.answers["works"].noul >= 0
 
@@ -35,7 +42,9 @@ async def test_typesafe_live_contract_reports_model_answers_and_usage() -> None:
         canonical_json(
             {
                 "answer_noul": result.answers["works"].noul,
+                "concrete_model_accepted": True,
                 "model": result.model,
+                "requested_model": provider.model,
                 "usage": result.usage.model_dump(mode="json"),
             }
         )

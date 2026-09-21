@@ -79,7 +79,7 @@ class TerraOnlyAgent:
         repetition: int,
     ) -> AgentRunOutcome:
         started = perf_counter_ns()
-        boundary = self.sandbox_manager.create(
+        boundary = self.sandbox_manager.create_fresh(
             run_id,
             f"{case.visible.case_id}-r{repetition}",
         )
@@ -148,10 +148,8 @@ class TerraOnlyAgent:
             errors.append("invalid_terminal_output")
         except CodexRequestTimeout:
             errors.append("provider_timeout")
-        except CodexUsageLimitExceeded:
-            errors.append("provider_usage_limit")
-        except TerraModelMismatch:
-            errors.append("model_version_changed")
+        except (CodexUsageLimitExceeded, TerraModelMismatch):
+            raise
         except TerraProviderError:
             errors.append("provider_error")
 
@@ -184,7 +182,7 @@ class TerraOnlyAgent:
                 usage.reasoning_output_tokens if usage is not None else 0
             ),
             tool_events=tuple(runtime.tool_events),
-            provider_events=result.raw_token_events if result is not None else (),
+            provider_events=result.raw_events if result is not None else (),
             dynamic_tool_requests=(
                 result.dynamic_tool_requests if result is not None else ()
             ),

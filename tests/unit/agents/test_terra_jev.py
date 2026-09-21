@@ -5,6 +5,7 @@ from typing import Any
 import pytest
 
 from fusebench.agents.terra_jev import TerraJevAgent
+from fusebench.benchmark.budget import JevBudgetExceeded
 from fusebench.contracts.actions import Action
 from fusebench.contracts.case import BenchmarkCase
 from fusebench.contracts.tools import FailurePlan, ReadTool, ToolErrorKind
@@ -274,6 +275,12 @@ async def test_missing_risk_read_triggers_permitted_third_decision_call(
     assert outcome.read_tools_requested == ("get_customer_risk",)
     assert outcome.model_calls == {"jev": 3}
     assert outcome.decision.executed_action is Action.RESHIP
+    assert len(outcome.jev_request_states) == 3
+    assert len(outcome.jev_responses) == 3
+    assert outcome.jev_request_states[0]["visible_case"]["case_id"] == (
+        shipping_case.visible.case_id
+    )
+    assert "customer_risk" in outcome.jev_request_states[-1]["observations"]
 
 
 @pytest.mark.asyncio
@@ -346,7 +353,6 @@ async def test_unsafe_risk_observation_overrides_autonomous_choice(
 @pytest.mark.parametrize(
     ("error", "expected"),
     [
-        (ModelVersionChanged("changed"), "model_version_changed"),
         (JevResponseError("invalid"), "invalid_terminal_output"),
     ],
 )
@@ -372,6 +378,33 @@ async def test_provider_failures_fail_closed(
     assert outcome.decision.executed_action is Action.ESCALATE
     assert expected in outcome.decision.errors
     assert outcome.model_calls == {"jev": 1}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "error",
+    [ModelVersionChanged("changed"), JevBudgetExceeded("limit")],
+)
+async def test_run_abort_errors_propagate_without_executing_an_action(
+    error: Exception,
+    shipping_case: BenchmarkCase,
+) -> None:
+    provider = ScriptedJevProvider(
+        information_needs(),
+        [terminal_decision(Action.WAIT)],
+        information_error=error,
+    )
+    runtime = make_runtime(shipping_case)
+
+    with pytest.raises(type(error)):
+        await TerraJevAgent(provider=provider, policy_text="Policy.").run(
+            shipping_case,
+            runtime,
+            run_id="abort",
+            repetition=0,
+        )
+
+    assert runtime.environment.state.terminal_action is None
 
 
 def test_information_threshold_must_be_probability() -> None:

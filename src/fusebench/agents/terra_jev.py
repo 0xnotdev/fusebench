@@ -10,13 +10,12 @@ from typing import Any, Protocol
 from typesafe_sdk import TypeSafeAPITimeoutError, TypeSafeError
 
 from fusebench.agents.base import AgentRunOutcome, build_action_call
-from fusebench.benchmark.budget import JevBudgetExceeded
 from fusebench.contracts.actions import AUTONOMOUS_ACTIONS, Action
 from fusebench.contracts.case import BenchmarkCase
 from fusebench.contracts.decisions import DecisionResult
 from fusebench.contracts.tools import ReadTool
 from fusebench.jev.parsing import InformationNeeds, JevDecision, JevResponseError
-from fusebench.providers.typesafe_jev import ModelVersionChanged
+from fusebench.jev.state import build_initial_state, build_terminal_state
 from fusebench.simulator.tool_runtime import ReadCallResult, ToolRuntime
 
 DEFAULT_INFORMATION_THRESHOLD = 0.50
@@ -87,10 +86,14 @@ class TerraJevAgent:
         precheck_action: Action | None = None
         harness_errors: list[str] = []
         late_risk_unavailable = False
+        jev_request_states: list[dict[str, Any]] = []
+        jev_responses: list[dict[str, Any]] = []
 
         try:
             model_calls += 1
+            jev_request_states.append(build_initial_state(self.policy_text, case))
             information = await self.provider.infer_information_needs(self.policy_text, case)
+            jev_responses.append(_raw_jev_response(information))
             selected = [
                 (tool, slot)
                 for need, tool, slot in _READ_PLAN
@@ -108,6 +111,11 @@ class TerraJevAgent:
                 _record_read(call, slot, observations, observation_errors)
 
             model_calls += 1
+            jev_request_states.append(
+                build_terminal_state(
+                    self.policy_text, case, observations, observation_errors
+                )
+            )
             decision = await self.provider.infer_terminal_action(
                 self.policy_text,
                 case,
@@ -115,6 +123,7 @@ class TerraJevAgent:
                 observation_errors,
             )
             decisions.append(decision)
+            jev_responses.append(_raw_jev_response(decision))
 
             risk_was_requested = ReadTool.GET_CUSTOMER_RISK.value in requested_tools
             if decision.action in AUTONOMOUS_ACTIONS and not risk_was_requested:
@@ -133,6 +142,11 @@ class TerraJevAgent:
                 )
                 late_risk_unavailable = risk_call.error is not None
                 model_calls += 1
+                jev_request_states.append(
+                    build_terminal_state(
+                        self.policy_text, case, observations, observation_errors
+                    )
+                )
                 decision = await self.provider.infer_terminal_action(
                     self.policy_text,
                     case,
@@ -140,10 +154,7 @@ class TerraJevAgent:
                     observation_errors,
                 )
                 decisions.append(decision)
-        except ModelVersionChanged:
-            harness_errors.append("model_version_changed")
-        except JevBudgetExceeded:
-            harness_errors.append("provider_usage_limit")
+                jev_responses.append(_raw_jev_response(decision))
         except TypeSafeAPITimeoutError:
             harness_errors.append("provider_timeout")
         except JevResponseError:
@@ -189,6 +200,8 @@ class TerraJevAgent:
                 information.model_dump(mode="json") if information is not None else {}
             ),
             jev_auxiliary=_auxiliary(final),
+            jev_request_states=tuple(jev_request_states),
+            jev_responses=tuple(jev_responses),
             precheck_action=precheck_action,
             tool_events=tuple(runtime.tool_events),
             action_result=action_execution.result,
@@ -286,3 +299,9 @@ def _auxiliary(decision: JevDecision | None) -> dict[str, Any]:
         "risk_legend": decision.risk_legend,
         "risk_probabilities": decision.risk_probabilities,
     }
+
+
+def _raw_jev_response(value: InformationNeeds | JevDecision) -> dict[str, Any]:
+    if value.raw_response:
+        return dict(value.raw_response)
+    return value.model_dump(mode="json", exclude={"raw_response"})

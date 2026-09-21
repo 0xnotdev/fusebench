@@ -306,6 +306,11 @@ async def test_fresh_thread_and_turn_are_strictly_configured(tmp_path: Path) -> 
     assert result.usage.input_tokens == 111
     assert result.usage.output_tokens == 22
     assert result.raw_token_events[0]["method"] == "thread/tokenUsage/updated"
+    assert [event["method"] for event in result.raw_events] == [
+        "thread/tokenUsage/updated",
+        "item/completed",
+        "turn/completed",
+    ]
     await provider.close()
 
 
@@ -329,6 +334,7 @@ async def test_response_thread_has_no_tools_or_decision_schema(tmp_path: Path) -
     assert "outputSchema" not in turn_request["params"]
     assert result.text == "A replacement is on the way."
     assert result.usage.input_tokens == 111
+    assert result.raw_events[-1]["method"] == "turn/completed"
     await provider.close()
 
 

@@ -85,6 +85,17 @@ def test_case_sandbox_rejects_reuse_and_copied_benchmark_files(tmp_path: Path) -
         manager.create("run", "case")
 
 
+def test_case_sandbox_fresh_attempt_uses_next_empty_suffix(tmp_path: Path) -> None:
+    manager = CaseSandboxManager(tmp_path / "artifacts" / "case_sandboxes")
+
+    first = manager.create_fresh("run", "case")
+    second = manager.create_fresh("run", "case")
+
+    assert first.case_sandbox.name == "case-a0001"
+    assert second.case_sandbox.name == "case-a0002"
+    assert list(second.case_sandbox.iterdir()) == []
+
+
 def test_case_sandbox_rejects_reparse_component(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

@@ -28,6 +28,7 @@ class InformationNeeds(BaseModel):
     input_tokens: int = Field(ge=0)
     output_tokens: int = Field(ge=0)
     latency_ms: float = Field(ge=0)
+    raw_response: dict[str, Any] = Field(default_factory=dict)
 
 
 class JevDecision(BaseModel):
@@ -46,6 +47,7 @@ class JevDecision(BaseModel):
     input_tokens: int = Field(ge=0)
     output_tokens: int = Field(ge=0)
     latency_ms: float = Field(ge=0)
+    raw_response: dict[str, Any] = Field(default_factory=dict)
 
 
 def _response(value: Any) -> SystemOneResponse:
@@ -93,6 +95,7 @@ def parse_information_needs(value: Any, latency_ms: float) -> InformationNeeds:
         input_tokens=input_tokens,
         output_tokens=output_tokens,
         latency_ms=latency_ms,
+        raw_response=response.model_dump(mode="json"),
         **nouls,
     )
 
@@ -125,4 +128,5 @@ def parse_terminal_decision(value: Any, latency_ms: float) -> JevDecision:
         input_tokens=input_tokens,
         output_tokens=output_tokens,
         latency_ms=latency_ms,
+        raw_response=response.model_dump(mode="json"),
     )

@@ -32,6 +32,8 @@ class AgentRunOutcome(BaseModel):
     jev_latencies_ms: tuple[float, ...] = ()
     jev_information_needs: dict[str, Any] = Field(default_factory=dict)
     jev_auxiliary: dict[str, Any] = Field(default_factory=dict)
+    jev_request_states: tuple[dict[str, Any], ...] = ()
+    jev_responses: tuple[dict[str, Any], ...] = ()
     precheck_action: Action | None = None
     tool_events: tuple[ToolEvent, ...] = ()
     provider_events: tuple[dict[str, Any], ...] = ()

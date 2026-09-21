@@ -10,7 +10,9 @@ from fusebench.contracts.actions import Action
 from fusebench.contracts.case import BenchmarkCase
 from fusebench.contracts.tools import FailurePlan, ReadTool, ToolErrorKind
 from fusebench.providers.codex_app_server import (
+    CodexUsageLimitExceeded,
     TerraFinalDecision,
+    TerraModelMismatch,
     TerraSession,
     TerraStructuredOutputError,
     TerraTurnResult,
@@ -342,3 +344,24 @@ async def test_provider_failures_execute_escalation_without_raw_action(
     assert outcome.decision.executed_action is Action.ESCALATE
     assert expected_error in outcome.decision.errors
     assert outcome.model_calls == {"terra": 1}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "error",
+    [CodexUsageLimitExceeded("limit"), TerraModelMismatch("changed")],
+)
+async def test_run_abort_errors_propagate_without_executing_an_action(
+    error: Exception,
+    shipping_case: BenchmarkCase,
+    tmp_path: Path,
+) -> None:
+    provider = ScriptedTerraProvider(Action.WAIT, error=error)
+    runtime = make_runtime(shipping_case)
+
+    with pytest.raises(type(error)):
+        await make_agent(provider, tmp_path).run(
+            shipping_case, runtime, run_id="abort", repetition=0
+        )
+
+    assert runtime.environment.state.terminal_action is None

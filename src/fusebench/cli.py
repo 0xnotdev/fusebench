@@ -5,6 +5,8 @@ from typing import Annotated
 
 import typer
 
+from fusebench.benchmark.commands import execute_dev_evaluation, execute_preflight
+
 app = typer.Typer(no_args_is_help=True, help="Run and analyze the FuseBench experiment.")
 dataset_app = typer.Typer(help="Build deterministic benchmark datasets.")
 freeze_app = typer.Typer(help="Create or verify an immutable benchmark freeze.")
@@ -18,10 +20,23 @@ def _not_ready(checkpoint: str) -> None:
 
 
 @app.command()
-def preflight() -> None:
+def preflight(
+    reuse_evidence: Annotated[
+        bool,
+        typer.Option(
+            "--reuse-evidence",
+            help="Skip new provider calls and validate existing sanitized evidence.",
+        ),
+    ] = False,
+) -> None:
     """Validate the local environment and live providers."""
 
-    _not_ready("CP-12")
+    report = execute_preflight(run_live=not reuse_evidence)
+    typer.echo(f"Preflight {'PASS' if report.passed else 'FAIL'}")
+    for name, check in report.checks.items():
+        typer.echo(f"- {name}: {'PASS' if check.passed else 'FAIL'} ({check.detail})")
+    if not report.passed:
+        raise typer.Exit(code=1)
 
 
 @dataset_app.command("build-dev")
@@ -46,11 +61,34 @@ def dev_run(
     systems: Annotated[str, typer.Option(help="Comma-separated system identifiers.")] = (
         "terra_only,terra_jev"
     ),
+    run_id: Annotated[str, typer.Option(help="Resumable development run identifier.")] = (
+        "dev-cp12-v1"
+    ),
+    seed: Annotated[int, typer.Option(help="Deterministic paired schedule seed.")] = 20260921,
+    information_threshold: Annotated[
+        float,
+        typer.Option(help="Jev information-read selection threshold."),
+    ] = 0.50,
 ) -> None:
     """Run the development set against selected systems."""
 
-    del systems
-    _not_ready("CP-12")
+    selected = tuple(item.strip() for item in systems.split(",") if item.strip())
+    try:
+        result = execute_dev_evaluation(
+            systems=selected,
+            run_id=run_id,
+            run_seed=seed,
+            information_threshold=information_threshold,
+        )
+    except (RuntimeError, ValueError) as error:
+        typer.echo(f"Development run blocked: {error}")
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"Development run {result['run_id']}: "
+        f"{result['completed']}/{result['scheduled']} auditable records"
+    )
+    if result["stopped_for_usage_limit"]:
+        typer.echo("Stopped safely at a provider usage or budget limit; rerun to resume.")
 
 
 @freeze_app.command("create")

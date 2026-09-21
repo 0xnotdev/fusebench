@@ -171,6 +171,7 @@ class TerraTurnResult(BaseModel):
     usage: TerraUsage
     raw_token_events: tuple[dict[str, Any], ...]
     dynamic_tool_requests: tuple[dict[str, Any], ...] = ()
+    raw_events: tuple[dict[str, Any], ...] = ()
 
 
 class TerraResponseResult(BaseModel):
@@ -181,6 +182,7 @@ class TerraResponseResult(BaseModel):
     text: str = Field(min_length=1)
     usage: TerraUsage
     raw_token_events: tuple[dict[str, Any], ...]
+    raw_events: tuple[dict[str, Any], ...] = ()
 
 
 def terra_output_schema() -> dict[str, Any]:
@@ -587,6 +589,7 @@ class CodexAppServerProvider:
             usage=usage,
             raw_token_events=token_events,
             dynamic_tool_requests=tuple(dynamic_requests),
+            raw_events=tuple(dict(event) for event in events),
         )
 
     async def response_turn(
@@ -660,6 +663,7 @@ class CodexAppServerProvider:
                 text=text,
                 usage=_parse_usage(token_events[-1]),
                 raw_token_events=token_events,
+                raw_events=tuple(dict(event) for event in events),
             )
 
     async def _handle_tool_request(

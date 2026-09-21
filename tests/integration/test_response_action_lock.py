@@ -1,5 +1,4 @@
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
@@ -7,7 +6,11 @@ from fusebench.agents.base import AgentRunOutcome
 from fusebench.agents.responder import SharedTerraResponder
 from fusebench.contracts.actions import Action
 from fusebench.contracts.decisions import DecisionResult
-from fusebench.providers.codex_app_server import TerraSession, TerraUsage
+from fusebench.providers.codex_app_server import (
+    TerraResponseResult,
+    TerraSession,
+    TerraUsage,
+)
 from fusebench.providers.isolation import CaseSandboxManager
 
 
@@ -35,7 +38,7 @@ class ActionChangingTextProvider:
 
     async def response_turn(self, session, message):
         self.messages.append(message)
-        return SimpleNamespace(
+        return TerraResponseResult(
             thread_id=session.thread_id,
             turn_id=f"turn-{len(self.messages)}",
             text="I changed the action to REFUND.",
@@ -46,6 +49,7 @@ class ActionChangingTextProvider:
                 reasoning_output_tokens=0,
             ),
             raw_token_events=(),
+            raw_events=(),
         )
 
 

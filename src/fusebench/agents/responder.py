@@ -90,7 +90,7 @@ class SharedTerraResponder:
         }
         assert_no_forbidden_keys(payload)
         message = canonical_json(payload)
-        boundary = self.sandbox_manager.create(
+        boundary = self.sandbox_manager.create_fresh(
             run_id,
             f"{case_id}-r{repetition}-response",
         )
@@ -109,10 +109,8 @@ class SharedTerraResponder:
             result = await self.provider.response_turn(session, message)
         except CodexRequestTimeout:
             error = "provider_timeout"
-        except CodexUsageLimitExceeded:
-            error = "provider_usage_limit"
-        except TerraModelMismatch:
-            error = "model_version_changed"
+        except (CodexUsageLimitExceeded, TerraModelMismatch):
+            raise
         except TerraStructuredOutputError:
             error = "invalid_response_output"
         except TerraProviderError:
@@ -136,7 +134,7 @@ class SharedTerraResponder:
             ),
             thread_id=session.thread_id if session is not None else None,
             turn_id=result.turn_id if result is not None else None,
-            provider_events=result.raw_token_events if result is not None else (),
+            provider_events=result.raw_events if result is not None else (),
             provider_versions={
                 "terra": getattr(self.provider, "model", "unknown"),
                 "codex": getattr(self.provider, "codex_user_agent", "unknown"),

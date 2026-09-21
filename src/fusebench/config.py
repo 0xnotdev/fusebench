@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     )
 
     typesafe_api_key: str | None = None
-    jev_model: str = "jev-latest"
+    jev_model: str = "jev-1.13.0"
     jev_hard_cap_usd: float = Field(default=1.0, gt=0)
     terra_model: str = "gpt-5.6-terra"
     terra_reasoning_effort: Literal["medium"] = "medium"

@@ -84,6 +84,17 @@ class CaseSandboxManager:
             runtime_workspace_roots=(resolved,),
         )
 
+    def create_fresh(self, run_id: str, logical_case_id: str) -> CaseIsolationBoundary:
+        """Allocate a new attempt directory without reusing incomplete state."""
+
+        _validate_identifier(run_id, "run_id")
+        _validate_identifier(logical_case_id, "case_id")
+        for attempt in range(1, 10_000):
+            case_id = f"{logical_case_id}-a{attempt:04d}"
+            if not (self.root / run_id / case_id).exists():
+                return self.create(run_id, case_id)
+        raise IsolationError("case sandbox attempt space exhausted")
+
 
 def evaluate_isolation_probe(
     *,

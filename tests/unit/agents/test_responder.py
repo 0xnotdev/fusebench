@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
@@ -8,7 +7,11 @@ from fusebench.agents.base import AgentRunOutcome
 from fusebench.agents.responder import SharedTerraResponder
 from fusebench.contracts.actions import Action
 from fusebench.contracts.decisions import DecisionResult
-from fusebench.providers.codex_app_server import TerraSession, TerraUsage
+from fusebench.providers.codex_app_server import (
+    TerraResponseResult,
+    TerraSession,
+    TerraUsage,
+)
 from fusebench.providers.codex_protocol import CodexRequestTimeout
 from fusebench.providers.isolation import CaseSandboxManager
 
@@ -63,7 +66,8 @@ class FakeResponseProvider:
         self.messages.append(message)
         if self.error is not None:
             raise self.error
-        return SimpleNamespace(
+        event = {"method": "thread/tokenUsage/updated"}
+        return TerraResponseResult(
             thread_id=session.thread_id,
             turn_id=f"turn-{len(self.messages)}",
             text=self.text,
@@ -73,7 +77,8 @@ class FakeResponseProvider:
                 output_tokens=12,
                 reasoning_output_tokens=0,
             ),
-            raw_token_events=({"method": "thread/tokenUsage/updated"},),
+            raw_token_events=(event,),
+            raw_events=(event,),
         )
 
 

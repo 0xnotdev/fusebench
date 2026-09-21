@@ -5,7 +5,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from fusebench.contracts.actions import Action
+from fusebench.contracts.actions import Action, IssueType
 
 
 class FailureTag(StrEnum):
@@ -35,12 +35,17 @@ class RunRecord(BaseModel):
     case_id: str
     system: str
     repetition: int = Field(ge=0)
+    category: str | None = None
+    issue_type: IssueType | None = None
     gold_action: Action
     raw_action: Action | None
     executed_action: Action
     action_probabilities: dict[Action, float] | None = None
     top_probability: float | None = Field(default=None, ge=0, le=1)
+    minimal_required_read_tools: frozenset[str] = frozenset()
+    allowed_autonomous_actions: frozenset[Action] = frozenset()
     read_tools_requested: tuple[str, ...] = ()
+    invalid_tool_requests: int = Field(default=0, ge=0)
     infrastructure_retries: int = Field(default=0, ge=0)
     model_calls: dict[str, int] = Field(default_factory=dict)
     decision_path_latency_ms: float | None = Field(default=None, ge=0)
@@ -53,6 +58,9 @@ class RunRecord(BaseModel):
     correct: bool
     business_loss: float = Field(ge=0)
     provider_versions: dict[str, str] = Field(default_factory=dict)
+    terminal_success: bool = False
+    persistent_tool_failure: bool = False
+    hallucinated_state: bool = False
     errors: tuple[FailureTag, ...] = ()
 
     @model_validator(mode="after")

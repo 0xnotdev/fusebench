@@ -312,3 +312,36 @@ external-interface deviations. The authoritative build requirements remain in
 - `uv run pytest -q`: PASS, 179 tests; 3 live tests deselected.
 - `uv run ruff check .`: PASS.
 - No live provider call was necessary and no external-interface deviation was required.
+
+## CP-11 — Metrics, statistics, reports, and plots — 2026-09-21
+
+- Added pure normalized-record metrics for raw final-action accuracy, executed-action
+  safety, end-to-end terminal success, false escalation with explicit denominator,
+  persistent-failure behavior, adversarial behavior, hallucinated-state incidents, and
+  the frozen business-loss diagnostic.
+- Added unscaled multiclass Brier, `1e-12`-clipped NLL, 10-bin top-label ECE with counts,
+  high-confidence error rates, the full preregistered threshold sweep, and a continuous
+  confidence-sorted action/unsafe risk-coverage curve with the required zero-observed-risk
+  caveat.
+- Added necessary-tool recall with empty required sets marked not applicable, unnecessary
+  read counts, model read counts, invalid-call rate, infrastructure retries, decision
+  latency percentiles, Terra freeze-price API-equivalent normalization, Jev promotional
+  credit estimates, and separately reported zero Terra marginal subscription spend.
+- Added repeatability flip rate, pairwise disagreement, confidence variance, pairwise tool
+  Jaccard similarity, and outcome variance.
+- Added exact paired-record validation, exact McNemar contingency/p-value, and seeded
+  paired bootstrap support for all specified measures. Analysis stores all 10,000 sample
+  differences per metric by default plus percentile intervals in `summary.json`.
+- Added regeneration of every section-40 table/artifact, the complete publication table,
+  neutral methodology disclosures, and exactly four headline figures (risk/coverage with
+  unsafe variant, calibration, latency/accuracy, and normalized cost/accuracy).
+- Extended the pre-freeze normalized `RunRecord` only with metadata already required for
+  record-only analysis: category, issue type, oracle tool/allowlist metadata,
+  terminal-success, invalid-call, persistent-failure, and hallucinated-state flags. No
+  scoring rule or threshold changed.
+- RED evidence: seven metric test modules failed collection because their implementation
+  modules did not yet exist.
+- `uv run pytest tests/unit/metrics -q`: PASS, 12 hand-calculated golden tests.
+- `uv run pytest -q`: PASS, 191 tests; 3 live tests deselected.
+- `uv run ruff check .`: PASS.
+- No provider calls or external-interface deviations.

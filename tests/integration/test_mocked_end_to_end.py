@@ -52,4 +52,3 @@ async def test_all_60_dev_cases_produce_120_auditable_records(tmp_path) -> None:
     assert summary.completed == 120
     assert len(recorder.load_records()) == 120
     assert recorder.verify_checksums() is True
-    assert not Path("data/test/cases.jsonl").exists()

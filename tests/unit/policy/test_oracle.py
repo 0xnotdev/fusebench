@@ -51,7 +51,11 @@ def build_case(
     [(10_000, Action.WAIT), (10_001, Action.ESCALATE)],
 )
 def test_amount_boundary(amount: int, expected: Action) -> None:
-    assert decide(build_case(IssueType.SHIPPING, amount_inr=amount)).action is expected
+    decision = decide(build_case(IssueType.SHIPPING, amount_inr=amount))
+
+    assert decision.action is expected
+    if amount == 10_001:
+        assert decision.minimal_required_read_tools == frozenset()
 
 
 @pytest.mark.parametrize(
@@ -64,7 +68,11 @@ def test_prior_refund_boundary(prior_refunds: int, expected: Action) -> None:
         hidden_overrides={"prior_exception_refunds_90d": prior_refunds},
     )
 
-    assert decide(case).action is expected
+    decision = decide(case)
+
+    assert decision.action is expected
+    if expected is Action.ESCALATE:
+        assert "get_customer_risk" in decision.minimal_required_read_tools
 
 
 def test_global_conflict_overrides_issue_specific_refund() -> None:
@@ -79,7 +87,12 @@ def test_global_conflict_overrides_issue_specific_refund() -> None:
         },
     )
 
-    assert decide(case).action is Action.ESCALATE
+    decision = decide(case)
+
+    assert decision.action is Action.ESCALATE
+    assert decision.minimal_required_read_tools == frozenset(
+        {"get_payment", "get_customer_risk"}
+    )
 
 
 @pytest.mark.parametrize(
@@ -151,13 +164,37 @@ def test_shipping_stall_requires_tracking_and_inventory() -> None:
 
     assert decision.action is Action.RESHIP
     assert decision.minimal_required_read_tools == frozenset(
-        {"get_tracking", "get_inventory"}
+        {"get_tracking", "get_inventory", "get_customer_risk"}
     )
     assert decision.allowed_autonomous_actions == frozenset({Action.RESHIP})
 
 
+def test_persistent_customer_risk_failure_blocks_an_autonomous_action() -> None:
+    case = build_case(
+        IssueType.SHIPPING,
+        category="tool_failure",
+        hidden_overrides={
+            "days_without_carrier_movement": 7,
+            "inventory_available": 1,
+            "tool_failures": {
+                "get_customer_risk": FailurePlan(
+                    persistent=True,
+                    error_kind=ToolErrorKind.UNAVAILABLE,
+                )
+            },
+        },
+    )
+
+    decision = decide(case)
+
+    assert decision.action is Action.ESCALATE
+    assert decision.minimal_required_read_tools == frozenset(
+        {"get_tracking", "get_inventory", "get_customer_risk"}
+    )
+
+
 @pytest.mark.parametrize(
-    ("records", "expected"),
+    ("records", "expected", "tools"),
     [
         (
             (
@@ -165,6 +202,7 @@ def test_shipping_stall_requires_tracking_and_inventory() -> None:
                 PaymentRecord(charge_id="CH-2", amount_inr=3499, status="settled"),
             ),
             Action.REFUND,
+            {"get_payment", "get_customer_risk"},
         ),
         (
             (
@@ -172,15 +210,17 @@ def test_shipping_stall_requires_tracking_and_inventory() -> None:
                 PaymentRecord(charge_id="CH-2", amount_inr=3499, status="pending"),
             ),
             Action.WAIT,
+            {"get_payment"},
         ),
         (
             (PaymentRecord(charge_id="CH-1", amount_inr=3499, status="settled"),),
             Action.REQUEST_INFO,
+            {"get_payment"},
         ),
     ],
 )
 def test_duplicate_payment_rules(
-    records: tuple[PaymentRecord, ...], expected: Action
+    records: tuple[PaymentRecord, ...], expected: Action, tools: set[str]
 ) -> None:
     case = build_case(
         IssueType.DUPLICATE_PAYMENT,
@@ -190,7 +230,7 @@ def test_duplicate_payment_rules(
     decision = decide(case)
 
     assert decision.action is expected
-    assert decision.minimal_required_read_tools == frozenset({"get_payment"})
+    assert decision.minimal_required_read_tools == frozenset(tools)
 
 
 @pytest.mark.parametrize(
@@ -198,8 +238,20 @@ def test_duplicate_payment_rules(
     [
         (False, None, 1, Action.REQUEST_INFO, {"get_damage_evidence"}),
         (True, False, 1, Action.REQUEST_INFO, {"get_damage_evidence"}),
-        (True, True, 1, Action.RESHIP, {"get_damage_evidence", "get_inventory"}),
-        (True, True, 0, Action.REFUND, {"get_damage_evidence", "get_inventory"}),
+        (
+            True,
+            True,
+            1,
+            Action.RESHIP,
+            {"get_damage_evidence", "get_inventory", "get_customer_risk"},
+        ),
+        (
+            True,
+            True,
+            0,
+            Action.REFUND,
+            {"get_damage_evidence", "get_inventory", "get_customer_risk"},
+        ),
     ],
 )
 def test_damage_rules(

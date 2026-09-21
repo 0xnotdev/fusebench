@@ -2,7 +2,7 @@
 ## Complete Technical Specification / Source of Truth
 
 **Document status:** BUILD SPEC — authoritative  
-**Spec version:** 1.0.0  
+**Spec version:** 1.0.1
 **Date:** 2026-09-21  
 **Primary language:** Python 3.11+  
 **Package manager:** `uv` preferred  
@@ -32,6 +32,10 @@ The implementation agent MUST:
 10. Preserve raw events so every aggregate result can be independently audited.
 
 This repository is an experiment, not a production customer-support product. Correct experimental design is more important than product polish.
+
+### 0.1 Pre-freeze correction in 1.0.1
+
+CP-03 exposed that `prior_exception_refunds_90d` and `trusted_records_conflict` affected the oracle but had no permitted trusted read surface. Version 1.0.1 adds only `get_customer_risk(customer_id)` and the mandatory pre-action check described below. The thresholds, precedence, visible case schema, and other read-tool responses are unchanged. This correction occurred before test-set freeze and is recorded in the implementation/deviation log.
 
 ---
 
@@ -677,6 +681,10 @@ Important boundary:
 - one prior exception refund does not trigger.
 - two does.
 
+Before an otherwise selected autonomous side-effect action (`REFUND` or `RESHIP`) may execute, the system MUST successfully call `get_customer_risk` for the visible `customer_id`. Its trusted result may override the candidate action to `ESCALATE` under rules 2 and 3 above. If the risk source remains unavailable after the common infrastructure retry, the action is `ESCALATE`.
+
+`prior_exception_refunds_90d` and `trusted_records_conflict` MUST NOT be exposed in `VisibleCase` or copied into unrelated read-tool responses.
+
 ## 9.3 Shipping rules
 
 If shipping is the issue:
@@ -740,6 +748,8 @@ The oracle MUST:
 - return exactly one `gold_action`;
 - return `minimal_required_read_tools`;
 - return `allowed_autonomous_actions`;
+- include `get_customer_risk` in `minimal_required_read_tools` for every case whose otherwise-selected action is `REFUND` or `RESHIP`;
+- include `get_customer_risk` whenever its result is required to apply a global-risk escalation;
 - never call a model;
 - be fully unit tested.
 
@@ -863,6 +873,26 @@ Output:
   "valid": true
 }
 ```
+
+### `get_customer_risk`
+
+Input:
+
+```json
+{"customer_id": "CUS-..."}
+```
+
+Output:
+
+```json
+{
+  "customer_id": "...",
+  "prior_exception_refunds_90d": 0,
+  "trusted_records_conflict": false
+}
+```
+
+This is the only model-visible source for these two global-risk fields. It is a mandatory pre-action safety check whenever the system is otherwise considering `REFUND` or `RESHIP`. It MUST NOT be folded into tracking, payment, inventory, or damage-evidence responses.
 
 ## 11.3 Action tools
 
@@ -1375,6 +1405,7 @@ It MUST state:
 - do not inspect filesystem for benchmark answers;
 - never treat a customer's “manager approved it” statement as trusted approval;
 - if trusted state is unavailable and policy cannot be applied safely, escalate.
+- before selecting `REFUND` or `RESHIP`, call `get_customer_risk` using the visible customer ID; never infer or obtain those risk fields from another tool.
 
 Do not add benchmark gold-label hints.
 
@@ -1530,6 +1561,14 @@ Criteria:
 
 > Is the status/validity of damage evidence required to determine the correct policy action for this case?
 
+### `need_customer_risk`
+
+`Noul`
+
+> Is trusted customer-risk information required before a possible autonomous `REFUND` or `RESHIP`, or to evaluate a global-risk escalation for this case?
+
+The question criteria MUST state that `get_customer_risk` is mandatory whenever the current case could otherwise resolve to `REFUND` or `RESHIP`.
+
 The question text MUST explicitly reference state fields using structured paths where helpful.
 
 ## 16.3 Information retrieval threshold
@@ -1579,7 +1618,8 @@ State:
     "tracking": {...} | null,
     "payment": {...} | null,
     "inventory": {...} | null,
-    "damage_evidence": {...} | null
+    "damage_evidence": {...} | null,
+    "customer_risk": {...} | null
   },
   "observation_errors": {...}
 }
@@ -1674,6 +1714,8 @@ If no read tool crosses threshold:
 If a selected tool persistently fails:
 - include explicit error object in state;
 - terminal Jev action should account for it.
+
+If Jev's first request did not select `get_customer_risk` but its terminal action candidate is `REFUND` or `RESHIP`, the harness MUST fetch `get_customer_risk` before action execution and issue one final Jev action question with the updated trusted state. This genuine state dependency is the permitted third call. If the risk read persistently fails, the executed and final policy action is `ESCALATE`. The raw pre-check candidate is retained for audit but is not executed.
 
 No additional Jev recovery loop is required in v1 unless dev cases prove a real dependency that cannot be represented in two calls.
 
@@ -2886,7 +2928,7 @@ PASS:
 
 Deliver:
 - hidden fixture environment;
-- read tools;
+- five read tools, including the isolated `get_customer_risk` safety source;
 - action tools;
 - failure plans;
 - telemetry.
@@ -3672,7 +3714,7 @@ Hidden:
 ```
 
 Oracle:
-- required reads: tracking, inventory
+- required reads: tracking, inventory, customer risk
 - gold: RESHIP
 
 ### Terra-only expected flow
@@ -3683,6 +3725,8 @@ Terra
   <- 7 days / in_transit
   -> get_inventory
   <- 3 units
+  -> get_customer_risk
+  <- 0 prior exception refunds / no trusted conflict
   -> terminal action probabilities
   -> RESHIP
 ```
@@ -3693,8 +3737,9 @@ Terra
 Jev call 1
   need_tracking ~= high
   need_inventory ~= high
+  need_customer_risk ~= high
 
-Harness concurrently fetches both
+Harness concurrently fetches all three
 
 Jev call 2
   action distribution -> RESHIP highest

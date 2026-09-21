@@ -60,3 +60,19 @@ external-interface deviations. The authoritative build requirements remain in
   `trusted_records_conflict` are hidden oracle inputs, but sections 11 and 16 specify no
   read tool or trusted observation that can expose them to either scored system. This is
   not silently resolved in CP-02 because doing so would change the experiment interface.
+
+## Pre-freeze specification correction 1.0.1 — discovered during CP-03
+
+- The user confirmed the missing trusted read surface was a specification bug, not an
+  experiment redesign.
+- Added exactly one isolated trusted read tool:
+  `get_customer_risk(customer_id) -> {customer_id, prior_exception_refunds_90d,
+  trusted_records_conflict}`.
+- `get_customer_risk` is mandatory before an otherwise-selected `REFUND` or `RESHIP`;
+  risk thresholds and global policy precedence are unchanged.
+- The two risk fields remain absent from `VisibleCase` and every unrelated read response.
+- Updated spec version from 1.0.0 to 1.0.1 before test-set generation or freeze. No test
+  data exists and no live scored calls have occurred.
+- Updated contracts and oracle required-tool metadata test-first. The simulator, dataset,
+  prompts, Jev questions/state, agents, telemetry, mocks, and documentation will consume
+  this corrected interface in their normal checkpoints.

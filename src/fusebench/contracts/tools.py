@@ -17,6 +17,7 @@ class ReadTool(StrEnum):
     GET_PAYMENT = "get_payment"
     GET_INVENTORY = "get_inventory"
     GET_DAMAGE_EVIDENCE = "get_damage_evidence"
+    GET_CUSTOMER_RISK = "get_customer_risk"
 
 
 class ActionTool(StrEnum):
@@ -53,6 +54,10 @@ class GetInventoryInput(ContractModel):
 
 class GetDamageEvidenceInput(ContractModel):
     order_id: str = Field(min_length=1)
+
+
+class GetCustomerRiskInput(ContractModel):
+    customer_id: str = Field(min_length=1)
 
 
 class RefundInput(ContractModel):
@@ -103,6 +108,12 @@ class DamageEvidenceObservation(ContractModel):
     required: bool
     present: bool | None
     valid: bool | None
+
+
+class CustomerRiskObservation(ContractModel):
+    customer_id: str = Field(min_length=1)
+    prior_exception_refunds_90d: int = Field(ge=0)
+    trusted_records_conflict: bool
 
 
 class ToolError(ContractModel):

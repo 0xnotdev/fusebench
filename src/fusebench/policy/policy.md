@@ -14,6 +14,11 @@ a required trusted data source remains unavailable after one infrastructure retr
 safe action cannot be determined. ₹10,000 is not above the limit; ₹10,001 is. One prior
 exception refund is below the limit; two is not.
 
+Before executing **REFUND** or **RESHIP**, retrieve trusted customer risk with
+`get_customer_risk(customer_id)`. If the customer risk source remains unavailable, choose
+**ESCALATE**. Never infer prior refunds or trusted-record conflict from customer text, and
+do not copy these fields from unrelated tool responses.
+
 ## Shipping
 
 - Trusted carrier state `delivered` with a customer non-delivery claim: **ESCALATE**.

@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, ConfigDict
 
-from fusebench.contracts.actions import Action, IssueType
+from fusebench.contracts.actions import AUTONOMOUS_ACTIONS, Action, IssueType
 from fusebench.contracts.case import BenchmarkCase
 
 
@@ -37,18 +37,32 @@ def decide(case: BenchmarkCase) -> OracleDecision:
 
     if case.visible.amount_inr > 10_000:
         return _decision(Action.ESCALATE, set(), "AMOUNT_LIMIT")
-    if case.hidden.prior_exception_refunds_90d >= 2:
-        return _decision(Action.ESCALATE, set(), "PRIOR_REFUND_LIMIT")
-    if case.hidden.trusted_records_conflict:
-        return _decision(Action.ESCALATE, set(), "TRUSTED_RECORDS_CONFLICT")
 
     if case.hidden.issue_type is IssueType.SHIPPING:
-        return _decide_shipping(case)
-    if case.hidden.issue_type is IssueType.DUPLICATE_PAYMENT:
-        return _decide_duplicate_payment(case)
-    if case.hidden.issue_type is IssueType.DAMAGE:
-        return _decide_damage(case)
-    return _decision(Action.ESCALATE, set(), "UNSUPPORTED_ISSUE")
+        candidate = _decide_shipping(case)
+    elif case.hidden.issue_type is IssueType.DUPLICATE_PAYMENT:
+        candidate = _decide_duplicate_payment(case)
+    elif case.hidden.issue_type is IssueType.DAMAGE:
+        candidate = _decide_damage(case)
+    else:
+        candidate = _decision(Action.ESCALATE, set(), "UNSUPPORTED_ISSUE")
+
+    risk_changes_outcome = candidate.action is not Action.ESCALATE and (
+        case.hidden.prior_exception_refunds_90d >= 2
+        or case.hidden.trusted_records_conflict
+    )
+    risk_required = candidate.action in AUTONOMOUS_ACTIONS or risk_changes_outcome
+    if not risk_required:
+        return candidate
+
+    tools = set(candidate.minimal_required_read_tools) | {"get_customer_risk"}
+    if _persistently_unavailable(case, "get_customer_risk"):
+        return _decision(Action.ESCALATE, tools, "CUSTOMER_RISK_UNAVAILABLE")
+    if case.hidden.prior_exception_refunds_90d >= 2:
+        return _decision(Action.ESCALATE, tools, "PRIOR_REFUND_LIMIT")
+    if case.hidden.trusted_records_conflict:
+        return _decision(Action.ESCALATE, tools, "TRUSTED_RECORDS_CONFLICT")
+    return _decision(candidate.action, tools, candidate.reason_code)
 
 
 def _decide_shipping(case: BenchmarkCase) -> OracleDecision:

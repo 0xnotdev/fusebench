@@ -17,6 +17,7 @@
 - Use deterministic Python only for gold labels; neither Terra nor Jev may generate or validate them.
 - Never expose hidden truth, evaluator metadata, dataset files, oracle code, or gold labels to either provider.
 - Use exactly five terminal actions: `REFUND`, `RESHIP`, `REQUEST_INFO`, `WAIT`, `ESCALATE`.
+- Use exactly five trusted read tools after the pre-freeze 1.0.1 correction; `get_customer_risk(customer_id)` is the sole model-visible source for prior-refund count and trusted-record conflict and is mandatory before an otherwise-selected `REFUND` or `RESHIP`.
 - Use fresh Terra state per case and stateless Jev calls; model-side web access is disabled.
 - Use mocks before live providers and minimize paid/live calls to contract validation and CP-12 dev evaluation.
 - Preserve raw events, canonicalize JSON with sorted keys and finite values, hash provider-bound payloads, and redact secrets.
@@ -181,11 +182,11 @@ Commit as `feat: implement frozen policy oracle`; push sequentially.
 
 **Interfaces:**
 - Consumes: contract tool schemas, immutable `BenchmarkCase`, `FailurePlan`.
-- Produces: `SimulatorEnvironment.from_case(case, seed)`, `ToolRuntime.call_read`, `ToolRuntime.execute_action`, immutable telemetry events, exactly-one infrastructure retry, and deterministic replacement IDs independent of system.
+- Produces: `SimulatorEnvironment.from_case(case, seed)`, `ToolRuntime.call_read`, `ToolRuntime.execute_action`, all five isolated read responses including customer risk, immutable telemetry events, exactly-one infrastructure retry, and deterministic replacement IDs independent of system.
 
 - [ ] **Step 1: Write failing simulator tests**
 
-Assert hidden-to-tool mapping, schema/identity validation, read idempotency, action side effects, duplicate terminal rejection, deliberately wrong actions still execute, temporary retry success, persistent failure surfacing, infrastructure retry separation, and semantic equality after paired resets.
+Assert hidden-to-tool mapping, schema/identity validation, customer risk appears only from `get_customer_risk`, read idempotency, action side effects, duplicate terminal rejection, deliberately wrong actions still execute, temporary retry success, persistent failure surfacing, infrastructure retry separation, and semantic equality after paired resets.
 
 - [ ] **Step 2: Observe RED**
 
@@ -220,7 +221,7 @@ Commit as `feat: add deterministic simulator`; push sequentially.
 
 **Interfaces:**
 - Consumes: oracle, case contracts, seeded `random.Random`.
-- Produces: `build_dev_dataset(seed) -> list[BenchmarkCase]`, canonical JSONL, manifest counts/hash, and a model-visible serializer exposing only `VisibleCase`.
+- Produces: `build_dev_dataset(seed) -> list[BenchmarkCase]`, canonical JSONL, manifest counts/hash, model-visible serialization that exposes only `VisibleCase`, and required-tool metadata that includes `get_customer_risk` before autonomous gold actions.
 
 - [ ] **Step 1: Write failing dataset tests**
 
@@ -269,7 +270,7 @@ Inspect installed SDK signatures and current official docs. Record concrete devi
 
 - [ ] **Step 2: Write failing mock/parser/budget tests**
 
-Tests cover batched initial questions, structured paths, explicit prompt-injection boundary, success parsing, missing/unknown answers, malformed probabilities, usage absence, model-version capture/change, budget precheck, atomic update, and secret redaction.
+Tests cover batched initial questions including `need_customer_risk`, structured paths, explicit prompt-injection boundary, success parsing, missing/unknown answers, malformed probabilities, usage absence, model-version capture/change, budget precheck, atomic update, and secret redaction.
 
 - [ ] **Step 3: Observe RED**
 
@@ -380,7 +381,7 @@ Run full tests and Ruff; commit as `security: enforce Codex case isolation`; pus
 
 - [ ] **Step 1: Write failing agent tests**
 
-Use scripted fake providers for every gold action, required/unnecessary/repeated tools, bad IDs, unknown tools, probability tolerance/invalid/all-zero cases, provider errors, six-turn/eight-read limits, and persistent failure escalation.
+Use scripted fake providers for every gold action, the mandatory customer-risk check before autonomous actions, required/unnecessary/repeated tools, bad IDs, unknown tools, probability tolerance/invalid/all-zero cases, provider errors, six-turn/eight-read limits, and persistent failure escalation.
 
 - [ ] **Step 2: Observe RED**
 
@@ -413,7 +414,7 @@ Commit as `feat: implement Terra-only agent`; push sequentially.
 
 - [ ] **Step 1: Write failing hybrid tests**
 
-Assert one initial batch, `>=0.50` threshold behavior, concurrent selected reads, zero-read path, persistent-error state, action Choice alone controls execution, auxiliary judgments never override action, two normal Jev calls, complete probability capture, and no hidden/evaluator keys.
+Assert one initial batch including `need_customer_risk`, `>=0.50` threshold behavior, concurrent selected reads, zero-read path, persistent-error state, action Choice alone controls normal execution, auxiliary judgments never override action, two normal Jev calls, the permitted third decision call when an autonomous candidate lacks a prior risk read, complete probability capture, and no hidden/evaluator keys.
 
 - [ ] **Step 2: Observe RED**
 
@@ -557,4 +558,3 @@ Produce the requested CP-00–CP-12 readiness report with checkpoint status, exa
 - Placeholder scan: no deferred implementation placeholders are used; external live compatibility is an explicit checkpoint gate rather than hidden future work.
 - Type consistency: contracts flow from CP-01 into oracle/simulator, then agents, normalized records, metrics, and runner without provider-to-metrics coupling.
 - Review focus: each listed failure mode is assigned to a concrete test task above.
-

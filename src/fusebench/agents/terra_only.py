@@ -137,6 +137,7 @@ class TerraOnlyAgent:
         result: TerraTurnResult | None = None
         errors: list[str] = []
         model_calls = 0
+        structured_failure: TerraStructuredOutputError | None = None
         try:
             session = await self.provider.start_case(
                 boundary.case_sandbox,
@@ -144,7 +145,8 @@ class TerraOnlyAgent:
             )
             model_calls = 1
             result = await self.provider.turn(session, payload, tool_handler=handle_tool)
-        except TerraStructuredOutputError:
+        except TerraStructuredOutputError as exc:
+            structured_failure = exc
             errors.append("invalid_terminal_output")
         except CodexRequestTimeout:
             errors.append("provider_timeout")
@@ -166,11 +168,19 @@ class TerraOnlyAgent:
         )
         ended = perf_counter_ns()
 
-        usage = result.usage if result is not None else None
+        usage = result.usage if result is not None else (
+            structured_failure.usage if structured_failure is not None else None
+        )
         return AgentRunOutcome(
             decision=decision,
             thread_id=session.thread_id if session is not None else None,
-            turn_id=result.turn_id if result is not None else None,
+            turn_id=(
+                result.turn_id
+                if result is not None
+                else structured_failure.turn_id
+                if structured_failure is not None
+                else None
+            ),
             read_tools_requested=tuple(read_tools_requested),
             infrastructure_retries=infrastructure_retries,
             model_calls={"terra": model_calls},
@@ -182,9 +192,19 @@ class TerraOnlyAgent:
                 usage.reasoning_output_tokens if usage is not None else 0
             ),
             tool_events=tuple(runtime.tool_events),
-            provider_events=result.raw_events if result is not None else (),
+            provider_events=(
+                result.raw_events
+                if result is not None
+                else structured_failure.raw_events
+                if structured_failure is not None
+                else ()
+            ),
             dynamic_tool_requests=(
-                result.dynamic_tool_requests if result is not None else ()
+                result.dynamic_tool_requests
+                if result is not None
+                else structured_failure.dynamic_tool_requests
+                if structured_failure is not None
+                else ()
             ),
             loop_limit_exceeded=loop_limit_exceeded,
             invalid_tool_requests=invalid_tool_requests,

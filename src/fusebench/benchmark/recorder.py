@@ -35,6 +35,7 @@ class RunRecorder:
         *,
         secrets: Sequence[str] = (),
         provider_versions: Mapping[str, str] | None = None,
+        raw_root: Path | None = None,
     ) -> None:
         _validate_component(run_id)
         self.run_id = run_id
@@ -43,6 +44,11 @@ class RunRecorder:
         self.records_path = self.run_dir / "records.jsonl"
         self.record_hashes_path = self.run_dir / "record_hashes.jsonl"
         self.checksums_path = self.run_dir / "checksums.json"
+        self.raw_run_dir = (
+            (raw_root / run_id).absolute()
+            if raw_root is not None
+            else self.run_dir / "raw"
+        )
         self.secrets = tuple(value for value in secrets if value)
         self.provider_versions = dict(provider_versions or {})
         records = self.load_records()
@@ -102,7 +108,7 @@ class RunRecorder:
     ) -> Path:
         _validate_component(system)
         _validate_component(case_id)
-        target = self.run_dir / "raw" / system / case_id / f"r{repetition}"
+        target = self.raw_run_dir / system / case_id / f"r{repetition}"
         target.mkdir(parents=True, exist_ok=True)
         return target
 
@@ -116,9 +122,9 @@ class RunRecorder:
         value: Any,
     ) -> Path:
         _validate_filename(name)
-        path = self.raw_dir(
+        path = _next_available(self.raw_dir(
             system=system, case_id=case_id, repetition=repetition
-        ) / name
+        ) / name)
         sanitized = self._redact(value)
         path.write_text(canonical_json(sanitized) + "\n", encoding="utf-8")
         return path
@@ -133,9 +139,9 @@ class RunRecorder:
         values: Iterable[Any],
     ) -> Path:
         _validate_filename(name)
-        path = self.raw_dir(
+        path = _next_available(self.raw_dir(
             system=system, case_id=case_id, repetition=repetition
-        ) / name
+        ) / name)
         lines = [canonical_json(self._redact(value)) for value in values]
         path.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
         return path
@@ -173,11 +179,22 @@ class RunRecorder:
         return value
 
     def _checksums(self) -> dict[str, str]:
-        return {
+        checksums = {
             path.relative_to(self.run_dir).as_posix(): sha256(path.read_bytes()).hexdigest()
             for path in sorted(self.run_dir.rglob("*"))
             if path.is_file() and path != self.checksums_path
         }
+        if self.raw_run_dir.exists() and not self.raw_run_dir.is_relative_to(self.run_dir):
+            checksums.update(
+                {
+                    f"raw/{path.relative_to(self.raw_run_dir).as_posix()}": sha256(
+                        path.read_bytes()
+                    ).hexdigest()
+                    for path in sorted(self.raw_run_dir.rglob("*"))
+                    if path.is_file()
+                }
+            )
+        return checksums
 
     def _write_checksums(self) -> None:
         self.checksums_path.write_text(
@@ -201,3 +218,13 @@ def _validate_component(value: str) -> None:
 def _validate_filename(value: str) -> None:
     if Path(value).name != value or value in {".", ".."}:
         raise ValueError("unsafe artifact filename")
+
+
+def _next_available(path: Path) -> Path:
+    if not path.exists():
+        return path
+    for attempt in range(2, 10_000):
+        candidate = path.with_name(f"{path.stem}.a{attempt:04d}{path.suffix}")
+        if not candidate.exists():
+            return candidate
+    raise RuntimeError("raw artifact attempt space exhausted")

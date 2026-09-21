@@ -50,7 +50,12 @@ def test_append_is_durable_unique_resumable_and_checksummed(tmp_path: Path) -> N
 
 
 def test_raw_artifacts_use_exact_layout_and_redact_secrets(tmp_path: Path) -> None:
-    recorder = RunRecorder(tmp_path, "run-1", secrets=("super-secret-value",))
+    recorder = RunRecorder(
+        tmp_path / "runs",
+        "run-1",
+        raw_root=tmp_path / "raw",
+        secrets=("super-secret-value",),
+    )
 
     path = recorder.write_raw_json(
         system="terra_jev",
@@ -66,8 +71,8 @@ def test_raw_artifacts_use_exact_layout_and_redact_secrets(tmp_path: Path) -> No
 
     assert path == (
         tmp_path
-        / "run-1"
         / "raw"
+        / "run-1"
         / "terra_jev"
         / "CASE_2"
         / "r0"
@@ -79,6 +84,30 @@ def test_raw_artifacts_use_exact_layout_and_redact_secrets(tmp_path: Path) -> No
     assert '"input_tokens":50' in text
     recorder.refresh_checksums()
     assert recorder.verify_checksums() is True
+
+
+def test_raw_artifacts_never_overwrite_an_existing_attempt(tmp_path: Path) -> None:
+    recorder = RunRecorder(tmp_path / "runs", "run-1", raw_root=tmp_path / "raw")
+
+    first = recorder.write_raw_json(
+        system="terra_only",
+        case_id="CASE_1",
+        repetition=0,
+        name="decision_outcome.json",
+        value={"attempt": 1},
+    )
+    second = recorder.write_raw_json(
+        system="terra_only",
+        case_id="CASE_1",
+        repetition=0,
+        name="decision_outcome.json",
+        value={"attempt": 2},
+    )
+
+    assert first.name == "decision_outcome.json"
+    assert second.name == "decision_outcome.a0002.json"
+    assert '"attempt":1' in first.read_text(encoding="utf-8")
+    assert '"attempt":2' in second.read_text(encoding="utf-8")
 
 
 def test_provider_version_change_aborts_append_and_resume(tmp_path: Path) -> None:

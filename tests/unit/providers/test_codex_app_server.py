@@ -380,3 +380,26 @@ async def test_usage_limit_is_classified_without_retry() -> None:
 
     assert [item["method"] for item in transport.sent].count("turn/start") == 1
     await provider.close()
+
+
+@pytest.mark.asyncio
+async def test_invalid_structured_output_retains_full_raw_turn_evidence(
+    tmp_path: Path,
+) -> None:
+    transport = TerraTransport()
+    transport.output_text = "not-json"
+    provider = await make_provider(transport)
+    session = await provider.start_case(tmp_path / "invalid-output", "rules")
+
+    with pytest.raises(TerraStructuredOutputError) as caught:
+        await provider.turn(session, "case")
+
+    assert caught.value.raw_text == "not-json"
+    assert caught.value.usage is not None
+    assert caught.value.usage.input_tokens == 111
+    assert [event["method"] for event in caught.value.raw_events] == [
+        "thread/tokenUsage/updated",
+        "item/completed",
+        "turn/completed",
+    ]
+    await provider.close()

@@ -275,6 +275,8 @@ def _failure_tags(
         "provider_usage_limit": FailureTag.PROVIDER_USAGE_LIMIT,
         "provider_http_error": FailureTag.PROVIDER_HTTP_ERROR,
         "model_version_changed": FailureTag.MODEL_VERSION_CHANGED,
+        "invalid_terminal_output": FailureTag.UNKNOWN,
+        "provider_error": FailureTag.UNKNOWN,
     }
     tags.extend(
         mapping[error]

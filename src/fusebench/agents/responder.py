@@ -100,6 +100,7 @@ class SharedTerraResponder:
         result: TerraResponseResult | None = None
         error: str | None = None
         model_calls = 0
+        structured_failure: TerraStructuredOutputError | None = None
         try:
             session = await self.provider.start_response_case(
                 boundary.case_sandbox,
@@ -111,13 +112,16 @@ class SharedTerraResponder:
             error = "provider_timeout"
         except (CodexUsageLimitExceeded, TerraModelMismatch):
             raise
-        except TerraStructuredOutputError:
+        except TerraStructuredOutputError as exc:
+            structured_failure = exc
             error = "invalid_response_output"
         except TerraProviderError:
             error = "provider_error"
         ended = perf_counter_ns()
         response_latency = (ended - started) / 1_000_000
-        usage = result.usage if result is not None else None
+        usage = result.usage if result is not None else (
+            structured_failure.usage if structured_failure is not None else None
+        )
         return ResponseStageResult(
             customer_response=result.text if result is not None else None,
             response_stage_latency_ms=response_latency,
@@ -133,8 +137,20 @@ class SharedTerraResponder:
                 usage.reasoning_output_tokens if usage is not None else 0
             ),
             thread_id=session.thread_id if session is not None else None,
-            turn_id=result.turn_id if result is not None else None,
-            provider_events=result.raw_events if result is not None else (),
+            turn_id=(
+                result.turn_id
+                if result is not None
+                else structured_failure.turn_id
+                if structured_failure is not None
+                else None
+            ),
+            provider_events=(
+                result.raw_events
+                if result is not None
+                else structured_failure.raw_events
+                if structured_failure is not None
+                else ()
+            ),
             provider_versions={
                 "terra": getattr(self.provider, "model", "unknown"),
                 "codex": getattr(self.provider, "codex_user_agent", "unknown"),

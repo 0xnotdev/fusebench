@@ -365,3 +365,35 @@ async def test_run_abort_errors_propagate_without_executing_an_action(
         )
 
     assert runtime.environment.state.terminal_action is None
+
+
+@pytest.mark.asyncio
+async def test_invalid_output_retains_provider_evidence_and_usage(
+    shipping_case: BenchmarkCase,
+    tmp_path: Path,
+) -> None:
+    event = {"method": "item/completed", "params": {"item": {"text": "bad"}}}
+    error = TerraStructuredOutputError(
+        "bad output",
+        turn_id="turn-bad",
+        raw_text="bad",
+        raw_events=(event,),
+        usage=TerraUsage(
+            input_tokens=9,
+            cached_input_tokens=2,
+            output_tokens=1,
+            reasoning_output_tokens=0,
+        ),
+    )
+    provider = ScriptedTerraProvider(Action.WAIT, error=error)
+
+    outcome = await make_agent(provider, tmp_path).run(
+        shipping_case,
+        make_runtime(shipping_case),
+        run_id="invalid-evidence",
+        repetition=0,
+    )
+
+    assert outcome.provider_events == (event,)
+    assert outcome.turn_id == "turn-bad"
+    assert outcome.terra_input_tokens == 9

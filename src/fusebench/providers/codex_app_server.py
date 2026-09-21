@@ -85,6 +85,25 @@ class TerraEffortMismatch(TerraProviderError):
 class TerraStructuredOutputError(TerraProviderError):
     """Terra emitted invalid structured-loop output."""
 
+    def __init__(
+        self,
+        message: str,
+        *,
+        turn_id: str | None = None,
+        raw_text: str | None = None,
+        usage: TerraUsage | None = None,
+        raw_token_events: tuple[dict[str, Any], ...] = (),
+        raw_events: tuple[dict[str, Any], ...] = (),
+        dynamic_tool_requests: tuple[dict[str, Any], ...] = (),
+    ) -> None:
+        super().__init__(message)
+        self.turn_id = turn_id
+        self.raw_text = raw_text
+        self.usage = usage
+        self.raw_token_events = raw_token_events
+        self.raw_events = raw_events
+        self.dynamic_tool_requests = dynamic_tool_requests
+
 
 class CodexUsageLimitExceeded(TerraProviderError):
     """Codex usage or rate limit stopped the run."""
@@ -565,6 +584,13 @@ class CodexAppServerProvider:
         if completed_turn.get("status") != "completed":
             self._raise_turn_failure(completed_turn)
 
+        token_events = tuple(
+            event for event in events if event.get("method") == "thread/tokenUsage/updated"
+        )
+        if not token_events:
+            raise TerraProviderError("Terra turn emitted no token usage event")
+        usage = _parse_usage(token_events[-1])
+        raw_events = tuple(dict(event) for event in events)
         messages = [
             event.get("params", {}).get("item", {}).get("text")
             for event in events
@@ -573,23 +599,35 @@ class CodexAppServerProvider:
         ]
         raw_text = next((text for text in reversed(messages) if isinstance(text, str)), None)
         if raw_text is None:
-            raise TerraStructuredOutputError("Terra turn emitted no final agent message")
-
-        token_events = tuple(
-            event for event in events if event.get("method") == "thread/tokenUsage/updated"
-        )
-        if not token_events:
-            raise TerraProviderError("Terra turn emitted no token usage event")
-        usage = _parse_usage(token_events[-1])
+            raise TerraStructuredOutputError(
+                "Terra turn emitted no final agent message",
+                turn_id=turn_id,
+                usage=usage,
+                raw_token_events=token_events,
+                raw_events=raw_events,
+                dynamic_tool_requests=tuple(dynamic_requests),
+            )
+        try:
+            output = parse_terra_output(raw_text)
+        except TerraStructuredOutputError as exc:
+            raise TerraStructuredOutputError(
+                str(exc),
+                turn_id=turn_id,
+                raw_text=raw_text,
+                usage=usage,
+                raw_token_events=token_events,
+                raw_events=raw_events,
+                dynamic_tool_requests=tuple(dynamic_requests),
+            ) from exc
         return TerraTurnResult(
             thread_id=session.thread_id,
             turn_id=turn_id,
-            output=parse_terra_output(raw_text),
+            output=output,
             raw_text=raw_text,
             usage=usage,
             raw_token_events=token_events,
             dynamic_tool_requests=tuple(dynamic_requests),
-            raw_events=tuple(dict(event) for event in events),
+            raw_events=raw_events,
         )
 
     async def response_turn(
@@ -637,6 +675,15 @@ class CodexAppServerProvider:
             completed_turn = completion.get("params", {}).get("turn", {})
             if completed_turn.get("status") != "completed":
                 self._raise_turn_failure(completed_turn)
+            token_events = tuple(
+                event
+                for event in events
+                if event.get("method") == "thread/tokenUsage/updated"
+            )
+            if not token_events:
+                raise TerraProviderError("Terra response turn emitted no token usage event")
+            usage = _parse_usage(token_events[-1])
+            raw_events = tuple(dict(event) for event in events)
             messages = [
                 event.get("params", {}).get("item", {}).get("text")
                 for event in events
@@ -649,21 +696,20 @@ class CodexAppServerProvider:
                 None,
             )
             if not text:
-                raise TerraStructuredOutputError("Terra response turn emitted no message")
-            token_events = tuple(
-                event
-                for event in events
-                if event.get("method") == "thread/tokenUsage/updated"
-            )
-            if not token_events:
-                raise TerraProviderError("Terra response turn emitted no token usage event")
+                raise TerraStructuredOutputError(
+                    "Terra response turn emitted no message",
+                    turn_id=turn_id,
+                    usage=usage,
+                    raw_token_events=token_events,
+                    raw_events=raw_events,
+                )
             return TerraResponseResult(
                 thread_id=session.thread_id,
                 turn_id=turn_id,
                 text=text,
-                usage=_parse_usage(token_events[-1]),
+                usage=usage,
                 raw_token_events=token_events,
-                raw_events=tuple(dict(event) for event in events),
+                raw_events=raw_events,
             )
 
     async def _handle_tool_request(

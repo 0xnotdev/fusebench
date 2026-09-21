@@ -152,6 +152,7 @@ async def _execute_dev_evaluation(
             run_id,
             secrets=(settings.typesafe_api_key,),
             provider_versions=expected_versions,
+            raw_root=settings.fusebench_artifact_dir / "raw",
         )
         manifest = build_dev_manifest(
             dev_dataset=cases_path,

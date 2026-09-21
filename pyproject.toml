@@ -17,7 +17,7 @@ dependencies = [
   "pydantic-settings>=2.10",
   "scipy>=1.16",
   "typer>=0.16",
-  "typesafe-sdk>=0.1",
+  "typesafe-sdk==0.7.0",
 ]
 
 [project.scripts]

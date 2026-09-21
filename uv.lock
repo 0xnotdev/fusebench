@@ -346,7 +346,7 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.10" },
     { name = "scipy", specifier = ">=1.16" },
     { name = "typer", specifier = ">=0.16" },
-    { name = "typesafe-sdk", specifier = ">=0.1" },
+    { name = "typesafe-sdk", specifier = "==0.7.0" },
 ]
 
 [package.metadata.requires-dev]

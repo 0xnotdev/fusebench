@@ -112,3 +112,30 @@ external-interface deviations. The authoritative build requirements remain in
 - Dev dataset SHA-256:
   `887151cf54a2f975f32ce6a6d97a5be4b597e4ffe90078203015cdb725930422`.
 - Confirmed `data/test/cases.jsonl` does not exist.
+
+## CP-05 — TypeSafe adapter — implementation complete, live gate pending — 2026-09-21
+
+- Revalidated the interface against official TypeSafe documentation, the official SDK
+  source, PyPI metadata, and offline inspection of installed `typesafe-sdk 0.7.0`; findings
+  are in `docs/research/typesafe-interface-2026-09-21.md`.
+- Current interface matches the spec: Bearer-authenticated System One endpoint,
+  same-state batched Choice/Noul/Score questions, full probability/confidence fields,
+  concrete response model, token usage, and `$42/1B` input-token pricing.
+- Current concrete model is documented as `jev-1.13.0`; `jev-latest` resolves to it. The
+  adapter records and enforces one concrete reported model per run. Exact primary pinning
+  remains a pre-freeze live verification.
+- Provider-boundary details: responses are Pydantic models in SDK 0.7.0, Score criteria
+  are ordered sequences, Score legend/probability keys become integers, usage fields are
+  typed optional despite being required by HTTP docs, and the SDK default timeout is 10s.
+  FuseBench passes 30s explicitly and fails closed on missing input usage.
+- Added five-question information fan-out including `need_customer_risk`, four terminal
+  questions, strict state allowlists/leakage checks, payload hashing, parsing, 3-attempt SDK
+  retry policy, concrete-model drift detection, and atomic `$1.00` budget accounting.
+- Pinned `typesafe-sdk==0.7.0` in project metadata.
+- RED evidence: five Jev/provider/budget test modules failed collection because the
+  implementation modules did not exist.
+- Mocked targeted suite: PASS, 17 tests.
+- Full suite: PASS, 107 tests with one live contract skipped.
+- `uv run ruff check .`: PASS.
+- Blocking live gate: `TYPESAFE_API_KEY` is absent, so the required tiny live System One
+  call has not run. No TypeSafe credit has been consumed.

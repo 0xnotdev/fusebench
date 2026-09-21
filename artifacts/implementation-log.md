@@ -95,3 +95,20 @@ external-interface deviations. The authoritative build requirements remain in
 - `uv run pytest -q`: PASS, 73 tests.
 - `uv run ruff check .`: PASS.
 - `git diff --check`: PASS.
+
+## CP-04 — Development dataset generator — 2026-09-21
+
+- Added scenario-first structured generation, curated template banks (15 shipping, 15
+  duplicate-payment, 15 damage, 10 unsupported, and 10 each terse/polite/noisy/adversarial),
+  deterministic perturbations, canonical JSON, recursive leakage checks, validation,
+  manifests, and a hard pre-CP-13 test-freeze refusal.
+- Generated exactly 60 dev cases with all eight categories, all five actions, all four
+  issue types, unique case/semantic IDs, and oracle-recomputed labels/tool metadata.
+- Autonomous gold actions include `get_customer_risk` in required-tool metadata.
+- RED evidence: four dataset test modules failed collection because dataset modules did
+  not exist.
+- `uv run pytest tests/unit/dataset -q`: PASS, 17 tests with no warnings.
+- `uv run fusebench dataset build-dev`: PASS, wrote 60 cases.
+- Dev dataset SHA-256:
+  `887151cf54a2f975f32ce6a6d97a5be4b597e4ffe90078203015cdb725930422`.
+- Confirmed `data/test/cases.jsonl` does not exist.

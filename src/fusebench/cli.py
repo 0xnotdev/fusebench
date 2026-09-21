@@ -1,5 +1,6 @@
 """FuseBench command-line interface."""
 
+from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -24,10 +25,20 @@ def preflight() -> None:
 
 
 @dataset_app.command("build-dev")
-def build_dev() -> None:
+def build_dev(
+    seed: Annotated[int, typer.Option(help="Deterministic development dataset seed.")] = 20260921,
+) -> None:
     """Build the deterministic development dataset."""
 
-    _not_ready("CP-04")
+    from fusebench.dataset.generator import build_dev_dataset
+    from fusebench.dataset.validation import write_dev_dataset
+
+    cases = build_dev_dataset(seed)
+    manifest = write_dev_dataset(cases, Path("data/dev"), seed)
+    typer.echo(
+        f"Wrote {manifest['case_count']} development cases "
+        f"with SHA-256 {manifest['dataset_sha256']}"
+    )
 
 
 @app.command("dev-run")

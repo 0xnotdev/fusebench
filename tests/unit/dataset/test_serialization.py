@@ -2,7 +2,6 @@ import json
 
 import pytest
 
-from fusebench.dataset.freeze import FreezeNotAuthorized, create_test_dataset
 from fusebench.dataset.generator import build_dev_dataset
 from fusebench.dataset.validation import (
     FORBIDDEN_PROVIDER_KEYS,
@@ -34,11 +33,6 @@ def test_canonical_json_sorts_keys_and_rejects_nonfinite_values() -> None:
 
 def test_forbidden_key_set_contains_specified_evaluator_fields() -> None:
     assert {"gold_action", "oracle", "category", "business_loss"} <= FORBIDDEN_PROVIDER_KEYS
-
-
-def test_test_dataset_creation_is_blocked_before_cp13() -> None:
-    with pytest.raises(FreezeNotAuthorized):
-        create_test_dataset(seed=123)
 
 
 def test_canonical_case_json_is_valid_json() -> None:

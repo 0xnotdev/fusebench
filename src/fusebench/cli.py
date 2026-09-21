@@ -6,6 +6,17 @@ from typing import Annotated
 import typer
 
 from fusebench.benchmark.commands import execute_dev_evaluation, execute_preflight
+from fusebench.benchmark.fairness import (
+    build_mechanical_fairness_audit,
+    write_mechanical_fairness_audit,
+)
+from fusebench.benchmark.freeze import (
+    FAIRNESS_AUDIT,
+    create_freeze,
+)
+from fusebench.benchmark.freeze import (
+    verify_freeze as verify_frozen_experiment,
+)
 
 app = typer.Typer(no_args_is_help=True, help="Run and analyze the FuseBench experiment.")
 dataset_app = typer.Typer(help="Build deterministic benchmark datasets.")
@@ -95,14 +106,44 @@ def dev_run(
 def freeze_create() -> None:
     """Create the frozen test set and experiment manifest."""
 
-    _not_ready("CP-13; explicit user authorization is required")
+    try:
+        manifest = create_freeze(Path("."))
+    except (RuntimeError, ValueError) as error:
+        typer.echo(f"Freeze creation failed: {error}")
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        "Frozen 240 test cases with SHA-256 "
+        f"{manifest['dataset_sha256']} and 50 preregistered repeatability cases."
+    )
+
+
+@freeze_app.command("audit")
+def freeze_audit() -> None:
+    """Run the final mechanical fairness audit without provider calls."""
+
+    try:
+        report = build_mechanical_fairness_audit(Path("."))
+        write_mechanical_fairness_audit(report, FAIRNESS_AUDIT)
+    except (RuntimeError, ValueError, AssertionError) as error:
+        typer.echo(f"Mechanical fairness audit failed: {error}")
+        raise typer.Exit(code=1) from error
+    typer.echo("Mechanical fairness audit PASS (0 provider calls; 0 test inference calls).")
 
 
 @freeze_app.command("verify")
 def freeze_verify() -> None:
     """Verify benchmark-critical hashes against the freeze manifest."""
 
-    _not_ready("CP-13; explicit user authorization is required")
+    report = verify_frozen_experiment(Path("."))
+    typer.echo(
+        f"Freeze verifier {'PASS' if report['passed'] else 'FAIL'}: "
+        f"{report.get('critical_file_count', 0)} critical files, "
+        f"{report.get('case_count', 0)} cases."
+    )
+    for error in report["errors"]:
+        typer.echo(f"- {error}")
+    if not report["passed"]:
+        raise typer.Exit(code=1)
 
 
 @app.command("run")

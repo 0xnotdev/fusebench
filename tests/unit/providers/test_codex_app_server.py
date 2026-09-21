@@ -175,6 +175,33 @@ class TerraTransport:
         return None
 
 
+class TwoToolTerraTransport(TerraTransport):
+    async def send(self, message: Mapping[str, Any]) -> None:
+        copied = dict(message)
+        if "method" not in copied and copied.get("id") in {99, 100}:
+            self.sent.append(copied)
+            assert copied["result"]["success"] is True
+            if copied["id"] == 99:
+                assert self.pending_turn_id is not None
+                await self.incoming.put(
+                    {
+                        "id": 100,
+                        "method": "item/tool/call",
+                        "params": {
+                            "arguments": {"sku": "sku-1"},
+                            "callId": "call-2",
+                            "threadId": f"thread-{self.thread_count}",
+                            "tool": "get_inventory",
+                            "turnId": self.pending_turn_id,
+                        },
+                    }
+                )
+            else:
+                await self._finish_turn()
+            return
+        await super().send(message)
+
+
 async def make_provider(transport: TerraTransport) -> CodexAppServerProvider:
     client = CodexProtocolClient(
         transport,
@@ -361,6 +388,33 @@ async def test_dynamic_tool_callback_is_scoped_and_serialized(tmp_path: Path) ->
             "text": '{"carrier_status":"in_transit","order_id":"order-1"}',
         }
     ]
+    await provider.close()
+
+
+@pytest.mark.asyncio
+async def test_dynamic_tool_loop_handles_multiple_calls_before_terminal_output(
+    tmp_path: Path,
+) -> None:
+    transport = TwoToolTerraTransport()
+    transport.emit_tool_call = True
+    provider = await make_provider(transport)
+    session = await provider.start_case(tmp_path / "two-tools", "rules")
+    calls: list[ReadTool] = []
+
+    async def handle(tool: ReadTool, arguments: dict[str, Any]) -> Mapping[str, Any]:
+        del arguments
+        calls.append(tool)
+        return {"ok": True}
+
+    result = await provider.turn(session, "case", tool_handler=handle)
+
+    assert calls == [ReadTool.GET_TRACKING, ReadTool.GET_INVENTORY]
+    assert [request["tool"] for request in result.dynamic_tool_requests] == [
+        "get_tracking",
+        "get_inventory",
+    ]
+    assert sum(item.get("method") == "turn/start" for item in transport.sent) == 1
+    assert isinstance(result.output, TerraFinalDecision)
     await provider.close()
 
 

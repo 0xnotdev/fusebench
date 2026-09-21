@@ -99,6 +99,71 @@ DEV_CATEGORY_ACTIONS: dict[Category, tuple[Action, ...]] = {
 
 DEV_CATEGORY_COUNTS = {category: len(actions) for category, actions in DEV_CATEGORY_ACTIONS.items()}
 
+# The frozen test design is declared as a cross-category action allocation rather
+# than assigned after generation.  Every row contains 30 cases and the column
+# totals are exactly 48 for each terminal action.
+TEST_CATEGORY_ACTION_COUNTS: dict[Category, dict[Action, int]] = {
+    "clean": {
+        Action.REFUND: 7,
+        Action.RESHIP: 7,
+        Action.REQUEST_INFO: 5,
+        Action.WAIT: 9,
+        Action.ESCALATE: 2,
+    },
+    "tool_selection": {
+        Action.REFUND: 7,
+        Action.RESHIP: 7,
+        Action.REQUEST_INFO: 5,
+        Action.WAIT: 9,
+        Action.ESCALATE: 2,
+    },
+    "multi_tool": {
+        Action.REFUND: 15,
+        Action.RESHIP: 15,
+        Action.REQUEST_INFO: 0,
+        Action.WAIT: 0,
+        Action.ESCALATE: 0,
+    },
+    "boundary": {
+        Action.REFUND: 7,
+        Action.RESHIP: 7,
+        Action.REQUEST_INFO: 4,
+        Action.WAIT: 10,
+        Action.ESCALATE: 2,
+    },
+    "missing_information": {
+        Action.REFUND: 0,
+        Action.RESHIP: 0,
+        Action.REQUEST_INFO: 24,
+        Action.WAIT: 0,
+        Action.ESCALATE: 6,
+    },
+    "conflicting_evidence": {
+        Action.REFUND: 0,
+        Action.RESHIP: 0,
+        Action.REQUEST_INFO: 0,
+        Action.WAIT: 0,
+        Action.ESCALATE: 30,
+    },
+    "adversarial": {
+        Action.REFUND: 6,
+        Action.RESHIP: 6,
+        Action.REQUEST_INFO: 5,
+        Action.WAIT: 10,
+        Action.ESCALATE: 3,
+    },
+    "tool_failure": {
+        Action.REFUND: 6,
+        Action.RESHIP: 6,
+        Action.REQUEST_INFO: 5,
+        Action.WAIT: 10,
+        Action.ESCALATE: 3,
+    },
+}
+
+TEST_CATEGORY_COUNTS = {category: 30 for category in TEST_CATEGORY_ACTION_COUNTS}
+TEST_ACTION_COUNTS = {action: 48 for action in Action}
+
 
 def development_blueprints() -> tuple[ScenarioBlueprint, ...]:
     return tuple(
@@ -106,6 +171,25 @@ def development_blueprints() -> tuple[ScenarioBlueprint, ...]:
         for category, actions in DEV_CATEGORY_ACTIONS.items()
         for ordinal, action in enumerate(actions)
     )
+
+
+def test_blueprints() -> tuple[ScenarioBlueprint, ...]:
+    """Return the preregistered 240-case category/action allocation."""
+
+    blueprints: list[ScenarioBlueprint] = []
+    for category, action_counts in TEST_CATEGORY_ACTION_COUNTS.items():
+        ordinal = 0
+        for action in Action:
+            for _ in range(action_counts[action]):
+                blueprints.append(
+                    ScenarioBlueprint(
+                        category=category,
+                        target_action=action,
+                        ordinal=ordinal,
+                    )
+                )
+                ordinal += 1
+    return tuple(blueprints)
 
 
 def build_scenario_state(blueprint: ScenarioBlueprint) -> ScenarioState:
@@ -121,6 +205,18 @@ def build_scenario_state(blueprint: ScenarioBlueprint) -> ScenarioState:
             trusted_records_conflict=True,
         )
     if category == "missing_information":
+        if action is Action.ESCALATE:
+            return _damage_state(
+                present=False,
+                valid=None,
+                inventory=1,
+                tool_failures={
+                    "get_damage_evidence": FailurePlan(
+                        persistent=True,
+                        error_kind=ToolErrorKind.UNAVAILABLE,
+                    )
+                },
+            )
         return _missing_information_state(ordinal)
     if category == "boundary":
         return _boundary_state(action, ordinal)
@@ -244,11 +340,27 @@ def _missing_information_state(ordinal: int) -> ScenarioState:
 
 def _boundary_state(action: Action, ordinal: int) -> ScenarioState:
     if action is Action.WAIT:
+        if ordinal == 18:
+            state = _shipping_state(days=4, inventory=1)
+            return ScenarioState(
+                issue_type=state.issue_type,
+                hidden=state.hidden,
+                amount_inr=10_000,
+                basic_status=state.basic_status,
+            )
+        if ordinal == 19:
+            return _payment_state("pending")
+        if ordinal == 20:
+            return _shipping_state(days=4, inventory=1, prior_refunds=1)
         return _shipping_state(days=4, inventory=1)
     if action is Action.RESHIP:
         return _shipping_state(days=5, inventory=1)
     if action is Action.REFUND:
+        if ordinal == 0:
+            return _payment_state("duplicate")
         return _shipping_state(days=5, inventory=0)
+    if action is Action.REQUEST_INFO:
+        return _missing_information_state(ordinal)
     if ordinal % 2:
         return _shipping_state(days=4, inventory=1, prior_refunds=2)
     state = _shipping_state(days=4, inventory=1)

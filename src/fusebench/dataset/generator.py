@@ -8,31 +8,60 @@ from fusebench.dataset.messages import render_message
 from fusebench.dataset.perturbations import perturb_message
 from fusebench.dataset.scenarios import (
     DEV_CATEGORY_COUNTS,
+    TEST_ACTION_COUNTS,
+    TEST_CATEGORY_COUNTS,
     ScenarioBlueprint,
     build_scenario_state,
     development_blueprints,
+    test_blueprints,
 )
 from fusebench.policy.oracle import decide
 
-__all__ = ["DEV_CATEGORY_COUNTS", "build_dev_dataset"]
+__all__ = [
+    "DEV_CATEGORY_COUNTS",
+    "TEST_ACTION_COUNTS",
+    "TEST_CATEGORY_COUNTS",
+    "build_dev_dataset",
+    "build_test_dataset",
+]
 
 
 def build_dev_dataset(seed: int) -> list[BenchmarkCase]:
     """Build all 60 development cases deterministically from structured state."""
 
+    return _build_dataset(development_blueprints(), seed=seed, split="DEV")
+
+
+def build_test_dataset(seed: int) -> list[BenchmarkCase]:
+    """Build the frozen 240-case test design without any model calls."""
+
+    return _build_dataset(test_blueprints(), seed=seed, split="TEST")
+
+
+def _build_dataset(
+    blueprints: tuple[ScenarioBlueprint, ...],
+    *,
+    seed: int,
+    split: str,
+) -> list[BenchmarkCase]:
     rng = Random(seed)
-    blueprints = list(development_blueprints())
-    rng.shuffle(blueprints)
-    return [_build_case(blueprint, index, rng) for index, blueprint in enumerate(blueprints, 1)]
+    shuffled = list(blueprints)
+    rng.shuffle(shuffled)
+    return [
+        _build_case(blueprint, index, rng, split=split)
+        for index, blueprint in enumerate(shuffled, 1)
+    ]
 
 
 def _build_case(
     blueprint: ScenarioBlueprint,
     index: int,
     rng: Random,
+    *,
+    split: str,
 ) -> BenchmarkCase:
     state = build_scenario_state(blueprint)
-    case_id = f"DEV_{index:04d}"
+    case_id = f"{split}_{index:04d}"
     semantic_id = (
         f"{blueprint.category}-{blueprint.ordinal:02d}-"
         f"{blueprint.target_action.value.lower()}"

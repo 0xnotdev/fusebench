@@ -48,3 +48,21 @@ def test_dev_run_command_executes_both_systems(monkeypatch) -> None:
     assert result.exit_code == 0
     assert "120/120" in result.stdout
     assert captured["systems"] == ("terra_only", "terra_jev")
+
+
+def test_freeze_verify_reports_pass(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "fusebench.cli.verify_frozen_experiment",
+        lambda root: {
+            "passed": True,
+            "errors": [],
+            "critical_file_count": 123,
+            "case_count": 240,
+        },
+    )
+
+    result = CliRunner().invoke(app, ["freeze", "verify"])
+
+    assert result.exit_code == 0
+    assert "PASS" in result.stdout
+    assert "240 cases" in result.stdout

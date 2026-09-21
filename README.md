@@ -108,18 +108,23 @@ Development results are diagnostics, not primary benchmark claims.
 
 ## Freeze and primary benchmark
 
-The freeze and primary commands intentionally remain blocked. Do not run them until the
-repository owner explicitly authorizes CP-13:
+CP-13 is implemented as an inference-free sequence: run the mechanical fairness audit,
+create the frozen dataset/manifest, then re-hash and validate the complete freeze:
 
 ```powershell
+uv run fusebench freeze audit
 uv run fusebench freeze create
 uv run fusebench freeze verify
-uv run fusebench run --split test --systems terra_only,terra_jev --run-id primary-v1
 ```
 
-CP-13 will create the test split, freeze hashes and environment/provider versions, select
-repeatability cases, and generate `EXPERIMENT.md`. After freeze, benchmark-critical tuning
-is prohibited.
+The freeze contains the 240-case test split, CSPRNG seeds, all critical-file hashes,
+environment/provider versions, 50 preregistered repeatability IDs, the pre-freeze tuning
+log, and `EXPERIMENT.md`. After freeze, benchmark-critical tuning is prohibited. The
+primary command remains blocked until CP-14 is explicitly authorized:
+
+```powershell
+uv run fusebench run --split test --systems terra_only,terra_jev --run-id primary-v1
+```
 
 ## Analysis
 
@@ -136,11 +141,11 @@ uv run fusebench report --run-id primary-v1
 
 ## Reproducibility
 
-The dev dataset is deterministic and hash checked. Paired scheduling uses a fixed seed;
+Both datasets are deterministic for their recorded seeds and hash checked. Paired scheduling uses a fixed seed;
 each system receives a fresh simulator state; every case and response uses a fresh empty
 sandbox; provider/model changes abort or stop safely; normalized records are flushed
-immediately; raw and normalized artifacts are covered by SHA-256 manifests. The test split
-is absent before freeze and agents have no imports from the oracle.
+immediately; raw and normalized artifacts are covered by SHA-256 manifests. Frozen test
+data is evaluator-only, and agents have no imports from the oracle.
 
 ## Current limitations
 

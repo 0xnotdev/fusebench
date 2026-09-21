@@ -310,6 +310,29 @@ async def test_fresh_thread_and_turn_are_strictly_configured(tmp_path: Path) -> 
 
 
 @pytest.mark.asyncio
+async def test_response_thread_has_no_tools_or_decision_schema(tmp_path: Path) -> None:
+    transport = TerraTransport()
+    transport.output_text = "A replacement is on the way."
+    provider = await make_provider(transport)
+
+    session = await provider.start_response_case(
+        tmp_path / "response-case",
+        "Write a short response without changing the action.",
+    )
+    result = await provider.response_turn(session, "locked action payload")
+
+    thread_request = next(
+        item for item in transport.sent if item.get("method") == "thread/start"
+    )
+    turn_request = next(item for item in transport.sent if item.get("method") == "turn/start")
+    assert thread_request["params"]["dynamicTools"] == []
+    assert "outputSchema" not in turn_request["params"]
+    assert result.text == "A replacement is on the way."
+    assert result.usage.input_tokens == 111
+    await provider.close()
+
+
+@pytest.mark.asyncio
 async def test_dynamic_tool_callback_is_scoped_and_serialized(tmp_path: Path) -> None:
     transport = TerraTransport()
     transport.emit_tool_call = True

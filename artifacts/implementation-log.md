@@ -284,3 +284,31 @@ external-interface deviations. The authoritative build requirements remain in
 - `uv run pytest -q`: PASS, 174 tests; 3 live tests deselected.
 - `uv run ruff check .`: PASS.
 - No external-interface or benchmark-semantic deviations.
+
+## CP-10 — Shared Terra responder — 2026-09-21
+
+- Added one shared post-action Terra responder for both architectures and a fixed
+  `prompts/terra_response.md` instruction that treats the business action as immutable.
+- The provider-bound payload is an explicit three-field allowlist containing only
+  `customer_message`, `executed_action`, and `action_result`; policy, case fixtures,
+  observations, oracle metadata, and decision probabilities are excluded.
+- Added a dedicated Codex response path using a fresh isolated thread with no dynamic
+  benchmark tools and no decision output schema. Existing shell/file/browser/network
+  restrictions remain in effect.
+- The response result contract deliberately has no raw or executed action field. Even a
+  response claiming to change the action cannot mutate the frozen decision outcome.
+  Responder timeout/provider/output failures are recorded separately and leave scoring
+  unchanged.
+- Decision-path latency remains primary. Response-stage latency, full response latency,
+  response-only tokens, calls, model versions, and provider events are captured
+  separately.
+- RED evidence: responder tests failed collection because `agents.responder` did not
+  exist; the production-provider test independently failed because the response-only
+  Codex methods did not exist.
+- `uv run pytest tests/unit/agents/test_responder.py
+  tests/integration/test_response_action_lock.py
+  tests/unit/providers/test_codex_app_server.py::test_response_thread_has_no_tools_or_decision_schema
+  -v`: PASS, 5 tests.
+- `uv run pytest -q`: PASS, 179 tests; 3 live tests deselected.
+- `uv run ruff check .`: PASS.
+- No live provider call was necessary and no external-interface deviation was required.

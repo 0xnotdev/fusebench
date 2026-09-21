@@ -173,6 +173,16 @@ class TerraTurnResult(BaseModel):
     dynamic_tool_requests: tuple[dict[str, Any], ...] = ()
 
 
+class TerraResponseResult(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    thread_id: str
+    turn_id: str
+    text: str = Field(min_length=1)
+    usage: TerraUsage
+    raw_token_events: tuple[dict[str, Any], ...]
+
+
 def terra_output_schema() -> dict[str, Any]:
     """Return the selected dynamic-tools terminal response schema."""
 
@@ -375,6 +385,32 @@ class CodexAppServerProvider:
         case_sandbox: Path,
         developer_instructions: str,
     ) -> TerraSession:
+        return await self._start_thread(
+            case_sandbox,
+            developer_instructions,
+            dynamic_tools=terra_read_tool_definitions(),
+        )
+
+    async def start_response_case(
+        self,
+        case_sandbox: Path,
+        developer_instructions: str,
+    ) -> TerraSession:
+        """Start a fresh response-only thread with no callable benchmark tools."""
+
+        return await self._start_thread(
+            case_sandbox,
+            developer_instructions,
+            dynamic_tools=[],
+        )
+
+    async def _start_thread(
+        self,
+        case_sandbox: Path,
+        developer_instructions: str,
+        *,
+        dynamic_tools: list[dict[str, Any]],
+    ) -> TerraSession:
         sandbox = case_sandbox.resolve()
         sandbox.mkdir(parents=True, exist_ok=True)
         if any(sandbox.iterdir()):
@@ -386,7 +422,7 @@ class CodexAppServerProvider:
                 "approvalPolicy": "never",
                 "cwd": str(sandbox),
                 "developerInstructions": developer_instructions,
-                "dynamicTools": terra_read_tool_definitions(),
+                "dynamicTools": dynamic_tools,
                 "ephemeral": True,
                 "model": self.model,
                 "permissions": FUSEBENCH_PERMISSION_PROFILE,
@@ -552,6 +588,79 @@ class CodexAppServerProvider:
             raw_token_events=token_events,
             dynamic_tool_requests=tuple(dynamic_requests),
         )
+
+    async def response_turn(
+        self,
+        session: TerraSession,
+        message: str,
+    ) -> TerraResponseResult:
+        """Generate free text on a response-only thread without a decision schema."""
+
+        async with self._turn_lock:
+            try:
+                response = await self.client.request(
+                    "turn/start",
+                    {
+                        "effort": self.effort,
+                        "input": [{"type": "text", "text": message}],
+                        "model": self.model,
+                        "permissions": FUSEBENCH_PERMISSION_PROFILE,
+                        "threadId": session.thread_id,
+                    },
+                    timeout_seconds=self.turn_timeout_seconds,
+                )
+            except CodexProtocolError as exc:
+                if exc.kind in {"usageLimitExceeded", "rateLimitExceeded"}:
+                    raise CodexUsageLimitExceeded("Codex usage limit exceeded") from exc
+                raise
+            turn = response.get("turn")
+            if not isinstance(turn, Mapping) or not isinstance(turn.get("id"), str):
+                raise TerraProviderError("turn/start omitted turn id")
+            turn_id = turn["id"]
+            events = await self.client.wait_for_turn(
+                turn_id,
+                timeout_seconds=self.turn_timeout_seconds,
+            )
+            completion = next(
+                (
+                    event
+                    for event in reversed(events)
+                    if event.get("method") == "turn/completed"
+                ),
+                None,
+            )
+            if completion is None:
+                raise TerraProviderError("response turn ended without completion event")
+            completed_turn = completion.get("params", {}).get("turn", {})
+            if completed_turn.get("status") != "completed":
+                self._raise_turn_failure(completed_turn)
+            messages = [
+                event.get("params", {}).get("item", {}).get("text")
+                for event in events
+                if event.get("method") == "item/completed"
+                and event.get("params", {}).get("item", {}).get("type")
+                == "agentMessage"
+            ]
+            text = next(
+                (item.strip() for item in reversed(messages) if isinstance(item, str)),
+                None,
+            )
+            if not text:
+                raise TerraStructuredOutputError("Terra response turn emitted no message")
+            token_events = tuple(
+                event
+                for event in events
+                if event.get("method") == "thread/tokenUsage/updated"
+            )
+            if not token_events:
+                raise TerraProviderError("Terra response turn emitted no token usage event")
+            return TerraResponseResult(
+                thread_id=session.thread_id,
+                turn_id=turn_id,
+                text=text,
+                usage=_parse_usage(token_events[-1]),
+                raw_token_events=token_events,
+            )
 
     async def _handle_tool_request(
         self,

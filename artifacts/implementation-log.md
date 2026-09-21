@@ -139,3 +139,21 @@ external-interface deviations. The authoritative build requirements remain in
 - `uv run ruff check .`: PASS.
 - Blocking live gate: `TYPESAFE_API_KEY` is absent, so the required tiny live System One
   call has not run. No TypeSafe credit has been consumed.
+
+## CP-05 live-gate completion — 2026-09-21
+
+- Stored the user-supplied credential only in the ignored local `.env`; verified it with
+  `git check-ignore -v .env`. The credential is absent from source, logs, and artifacts.
+- Changed the default pytest selection to exclude `live`, preserving a mock-only normal
+  test run; live provider checks require an explicit `-m live` invocation.
+- `uv run pytest tests/contract/test_typesafe_live.py -v -m live`: PASS, 1 test.
+- The live API reported concrete model `jev-1.13.0`, 287 input tokens, and 20 output
+  tokens. The provider recorded an estimated input cost of `$0.000012054` under the
+  configured `$1.00` hard cap.
+- Wrote the non-secret response evidence to
+  `artifacts/preflight/typesafe-contract.json`; budget state remains in the ignored
+  `artifacts/budget/` runtime directory.
+- `uv run pytest -q`: PASS, 107 tests; 1 explicitly deselected live test.
+- `uv run ruff check .`: PASS.
+- CP-05 is complete. No external-interface deviation from the researched SDK contract
+  was required.

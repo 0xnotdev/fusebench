@@ -29,3 +29,18 @@ external-interface deviations. The authoritative build requirements remain in
 - `uv run ruff check .`: PASS.
 - Deviation: the lock resolver reported an upstream `typesafe-sdk` metadata warning for
   a quoted version specifier; uv normalized it without changing the requested package.
+
+## CP-01 — Contracts — 2026-09-21
+
+- Added exact action/issue/tool/error/failure enums; strict immutable Pydantic case,
+  tool, event, decision, and normalized run-record contracts; and explicit probability
+  validation/renormalization.
+- RED evidence: six contract test modules failed collection because the contract modules
+  did not exist.
+- `uv run pytest tests/unit/contracts -v`: PASS, 25 tests.
+- Initial full verification found 10 Ruff-only findings (Python 3.11 `StrEnum`, line
+  wrapping, and one assertion order). Root cause was the configured modernization/style
+  rule set, not behavioral failures; those sources were corrected.
+- `uv run ruff check .`: PASS.
+- `uv run pytest -v`: PASS, 28 tests.
+- No benchmark-semantic deviations.

@@ -1,0 +1,1 @@
+{"arguments":{"order_id":"ORD-0034"},"attempt":1,"case_id":"DEV_0034","duration_ms":0.0252,"ended_at_ns":178810618050100,"infrastructure_retry":false,"result":{"carrier_status":"in_transit","days_without_movement":4,"order_id":"ORD-0034"},"result_kind":"success","started_at_ns":178810618024900,"system":"terra_only","tool":"get_tracking"}

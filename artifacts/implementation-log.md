@@ -345,3 +345,65 @@ external-interface deviations. The authoritative build requirements remain in
 - `uv run pytest -q`: PASS, 191 tests; 3 live tests deselected.
 - `uv run ruff check .`: PASS.
 - No provider calls or external-interface deviations.
+
+## CP-12 — Development evaluation — 2026-09-22
+
+- Added deterministic adjacent-pair scheduling, a preflight-gated sequential runner,
+  fresh same-seed simulator state per system/case, safe usage-limit stops, provider-version
+  invariants, resumable completed-key detection, append-and-fsync normalized records,
+  per-record hashes, complete run checksums, redacted raw artifacts, and dev input
+  manifests that refuse a present test split.
+- Added `fusebench preflight` and `fusebench dev-run`. The preflight validates Python,
+  imports, artifact writes, the Codex executable/version, exact Terra/medium dynamic-tool
+  behavior, TypeSafe concrete-model behavior, filesystem isolation, simulator contracts,
+  and absence of `data/test/cases.jsonl`.
+- Before the scored dev run, a tiny live TypeSafe probe confirmed that the reported
+  concrete version is accepted as the request model. The configured Jev model was pinned
+  from `jev-latest` to exact `jev-1.13.0`, as required by section 35.2.
+- Added full Jev request/response retention and full Codex turn-event retention, including
+  token usage and semantic invalid-output evidence. Usage- and model-version errors now
+  stop/abort without synthesizing a scored record or executing an action.
+- Added fresh suffixed sandbox attempts for deterministic resume. Existing empty or
+  incomplete attempts are never reused or deleted.
+- RED evidence: the initial CP-12 unit/integration collection failed on the absent
+  scheduler, recorder, manifest, preflight, and runner modules. Focused implementation
+  reached 20 passing CP-12 tests before the live evaluation.
+- Initial live run `dev-cp12-v1` produced 120 records, but post-run audit found two
+  reproducibility defects: raw artifacts were nested below `artifacts/runs` rather than
+  the specified `artifacts/raw/<run_id>` root, and semantic invalid Terra output did not
+  preserve its raw event stream. No scoring, policy, prompt, question, threshold, dataset,
+  or oracle rule was changed. The logging defects were fixed test-first and pushed in
+  commit `eb2e491`; v1 remains locally preserved and is not the readiness run.
+- Final live run `dev-cp12-v2` produced 120/120 paired auditable records. A user message
+  interrupted the process after 30 records; the deterministic resume skipped those 30
+  and completed the remaining 90 without overwrite, validating recovery behavior.
+- Although generated run directories are ignored by default, the final v2 raw,
+  normalized, budget, and analysis artifacts are force-committed to satisfy the explicit
+  request that the completed build evidence be pushed sequentially. The audit-defective
+  v1 runtime artifacts remain local and non-authoritative.
+- Added a repository-wide LF Git attribute (with PNGs binary) before committing the
+  checksummed evidence. This prevents Windows `core.autocrlf` from changing JSONL/JSON/CSV
+  bytes on checkout and invalidating dataset/run/future freeze hashes.
+- v2 integrity audit: normalized checksum verification PASS; dev-manifest drift empty;
+  120 decision and 120 response artifacts; all 60 system pairs complete; 120 Jev requests
+  matched by 120 responses; all Jev responses reported `jev-1.13.0`; all 40 autonomous
+  candidates included `get_customer_risk`; zero unsafe executed actions; zero response
+  failures; zero sandbox files; zero credential occurrences across 739 final artifacts;
+  zero forbidden evaluator-field occurrences in provider inputs; frozen test set absent.
+- Terra emitted two all-zero terminal distributions while encoding an intended tool call
+  in `reason_code`. These are model-level invalid terminal outputs anticipated by sections
+  14.6 and 18, not provider/parser failures. Both were scored incorrect, executed as safe
+  escalation, and retain complete raw events and token usage.
+- No prompt, Jev question, information threshold, policy, oracle, loss, dataset, or scoring
+  tuning was performed from dev results. The preregistered information threshold remains
+  `0.50`.
+- Final live preflight after all provider/logging changes: PASS, 3 live contracts and 14
+  simulator checks. Exact integrations: `gpt-5.6-terra`, medium turn effort,
+  `dynamic_tools`, Codex Desktop/App Server `0.155.0-alpha.9.2`, and `jev-1.13.0`.
+- Dev-only diagnostics for the readiness run: Terra-only accuracy/terminal success
+  `41/60` (`0.6833`), Terra+Jev `59/60` (`0.9833`); both observed zero unsafe autonomous
+  executions. These are not frozen test results and no primary conclusion is claimed.
+- Final verification before readiness documentation: `uv run pytest -q` PASS, 213 tests
+  with 3 live tests deselected; `uv run ruff check .` PASS.
+- CP-12 is complete. CP-13 freeze, test generation, primary execution, repeatability, and
+  primary reporting have not run.

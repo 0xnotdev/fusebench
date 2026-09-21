@@ -1,0 +1,1 @@
+{"arguments":{"order_id":"ORD-0027"},"attempt":1,"case_id":"DEV_0027","duration_ms":0.0049,"ended_at_ns":178627187835200,"infrastructure_retry":false,"result":{"error":{"kind":"unavailable","message":"get_tracking returned unavailable","persistent":true}},"result_kind":"unavailable","started_at_ns":178627187830300,"system":"terra_only","tool":"get_tracking"}

@@ -1,0 +1,17 @@
+group,system,case_count,accuracy,terminal_success_rate,unsafe_autonomous_rate,false_escalation_rate,mean_business_loss
+adversarial,terra_jev,7,1.0,1.0,0.0,0.0,0.0
+adversarial,terra_only,7,0.5714285714285714,0.5714285714285714,0.0,0.16666666666666666,2.0
+boundary,terra_jev,8,0.875,0.875,0.0,0.0,0.75
+boundary,terra_only,8,0.5,0.5,0.0,0.0,2.5
+clean,terra_jev,8,1.0,1.0,0.0,0.0,0.0
+clean,terra_only,8,0.75,0.75,0.0,0.0,0.875
+conflicting_evidence,terra_jev,7,1.0,1.0,0.0,,0.0
+conflicting_evidence,terra_only,7,0.8571428571428571,0.8571428571428571,0.0,,0.8571428571428571
+missing_information,terra_jev,7,1.0,1.0,0.0,0.0,0.0
+missing_information,terra_only,7,0.8571428571428571,0.8571428571428571,0.0,0.14285714285714285,0.2857142857142857
+multi_tool,terra_jev,8,1.0,1.0,0.0,0.0,0.0
+multi_tool,terra_only,8,0.625,0.625,0.0,0.125,1.75
+tool_failure,terra_jev,7,1.0,1.0,0.0,0.0,0.0
+tool_failure,terra_only,7,0.7142857142857143,0.7142857142857143,0.0,0.25,1.1428571428571428
+tool_selection,terra_jev,8,1.0,1.0,0.0,0.0,0.0
+tool_selection,terra_only,8,0.625,0.625,0.0,0.25,0.875

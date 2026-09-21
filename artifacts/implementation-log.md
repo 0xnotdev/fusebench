@@ -44,3 +44,19 @@ external-interface deviations. The authoritative build requirements remain in
 - `uv run ruff check .`: PASS.
 - `uv run pytest -v`: PASS, 28 tests.
 - No benchmark-semantic deviations.
+
+## CP-02 — Policy and deterministic oracle — 2026-09-21
+
+- Added the frozen human-readable policy, pure deterministic oracle, minimal required
+  read-tool metadata, autonomous-action allowlists, reason codes, and the exact frozen
+  business-loss matrix.
+- RED evidence: policy tests failed collection because `policy.oracle` and `policy.loss`
+  did not exist.
+- `uv run pytest tests/unit/policy -v`: PASS, 28 tests covering every stated threshold,
+  issue rule, persistent data failure, and global precedence interaction.
+- `uv run pytest -q`: PASS, 56 tests.
+- `uv run ruff check .`: PASS.
+- Pre-CP-03 design issue: `prior_exception_refunds_90d` and the generic
+  `trusted_records_conflict` are hidden oracle inputs, but sections 11 and 16 specify no
+  read tool or trusted observation that can expose them to either scored system. This is
+  not silently resolved in CP-02 because doing so would change the experiment interface.

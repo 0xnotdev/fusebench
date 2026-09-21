@@ -230,3 +230,29 @@ external-interface deviations. The authoritative build requirements remain in
 - `uv run pytest -q`: PASS, 136 tests; 3 explicitly deselected live tests.
 - `uv run ruff check .`: PASS.
 - CP-07 is complete; the freeze-blocking isolation gate is satisfied.
+
+## CP-08 — Terra-only agent — 2026-09-21
+
+- Added the isolated Terra-only execution harness using the preflight-selected
+  `dynamic_tools` protocol, one fresh Codex thread/sandbox per case, a visible-case-only
+  provider payload, exactly one terminal simulator action, and raw provider/tool/token
+  telemetry.
+- Enforced the invariant limits of six decision turns, eight total model-requested reads,
+  and two requests per read tool. The selected dynamic-tools protocol completes within one
+  decision turn; tool callbacks enforce both read limits and fail closed to an executed
+  escalation with no raw action on breach.
+- Added strict five-action probability normalization, separate raw and executed actions,
+  invalid-distribution metadata, provider timeout/usage/model/structured-output failure
+  classifications, and deterministic request-information action arguments.
+- Enforced the corrected mandatory `get_customer_risk` check before `REFUND` or `RESHIP`.
+  Missing, persistently unavailable, or unsafe risk observations override the candidate to
+  one executed `ESCALATE`; no oracle or hidden case state is imported by the agent.
+- RED evidence: the focused suite failed collection only because
+  `fusebench.agents.terra_only` did not yet exist.
+- `uv run pytest tests/unit/agents/test_terra_only.py
+  tests/integration/test_terra_only_smoke.py -v`: PASS, 21 tests.
+- The mocked end-to-end gate covers the seven required scenarios: shipping reship,
+  duplicate refund, request-info, wait, escalate, persistent tool failure, and adversarial
+  customer text. No live model/API call was needed.
+- `uv run ruff check .`: PASS.
+- No external-interface or benchmark-semantic deviations.

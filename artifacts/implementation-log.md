@@ -256,3 +256,31 @@ external-interface deviations. The authoritative build requirements remain in
   customer text. No live model/API call was needed.
 - `uv run ruff check .`: PASS.
 - No external-interface or benchmark-semantic deviations.
+
+## CP-09 — Terra + Jev hybrid agent — 2026-09-21
+
+- Added the hybrid decision harness with one batched Jev information-needs call, the
+  predeclared `>= 0.50` selection threshold, concurrent independent reads, explicit
+  observation/error state, and one authoritative terminal action call.
+- Normal cases make exactly two Jev calls. The only three-call path is the specified
+  genuine state dependency: if the first terminal candidate is `REFUND` or `RESHIP`
+  without an earlier customer-risk read, the harness fetches risk and asks the terminal
+  action question once more against the updated state.
+- The Jev `action` Choice distribution alone controls normal execution. Information
+  sufficiency, human-required, risk score, legends, probabilities, and confidence are
+  captured as auxiliary telemetry and never override the action in code.
+- Enforced the corrected risk safety boundary: unavailable late risk forces the final
+  executed action to `ESCALATE`; unsafe trusted risk overrides an autonomous candidate.
+  The pre-check candidate is separately retained for audit.
+- Captured full action probabilities, top probability, both-call token/latency totals,
+  information needs, auxiliary judgments, selected tools, retries, tool events, concrete
+  Jev model, raw versus executed action, and action result.
+- RED evidence: both hybrid test modules failed collection only because
+  `fusebench.agents.terra_jev` did not yet exist.
+- `uv run pytest tests/unit/agents/test_terra_jev.py
+  tests/integration/test_terra_jev_smoke.py -v`: PASS, 17 tests.
+- Mocked end-to-end coverage includes all seven required smoke scenarios. No live
+  TypeSafe or Codex call was needed for this checkpoint.
+- `uv run pytest -q`: PASS, 174 tests; 3 live tests deselected.
+- `uv run ruff check .`: PASS.
+- No external-interface or benchmark-semantic deviations.

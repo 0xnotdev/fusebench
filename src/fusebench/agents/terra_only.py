@@ -8,11 +8,11 @@ from pathlib import Path
 from time import perf_counter_ns
 from typing import Any, Protocol
 
-from fusebench.agents.base import AgentRunOutcome
+from fusebench.agents.base import AgentRunOutcome, build_action_call
 from fusebench.contracts.actions import AUTONOMOUS_ACTIONS, Action
 from fusebench.contracts.case import BenchmarkCase
 from fusebench.contracts.decisions import DecisionResult, normalize_action_probabilities
-from fusebench.contracts.tools import ActionTool, ReadTool
+from fusebench.contracts.tools import ReadTool
 from fusebench.dataset.validation import canonical_json, serialize_visible_case
 from fusebench.providers.codex_app_server import (
     CodexUsageLimitExceeded,
@@ -164,7 +164,7 @@ class TerraOnlyAgent:
             risk_requested=ReadTool.GET_CUSTOMER_RISK.value in read_tools_requested,
         )
         action_execution = await runtime.execute_action(
-            *_action_call(case, decision.executed_action, decision.reason_code)
+            *build_action_call(case, decision.executed_action, decision.reason_code)
         )
         ended = perf_counter_ns()
 
@@ -256,35 +256,3 @@ def _fallback_decision(*errors: str) -> DecisionResult:
         reason_code="HARNESS_FAIL_CLOSED",
         errors=tuple(dict.fromkeys(errors)),
     )
-
-
-def _action_call(
-    case: BenchmarkCase,
-    action: Action,
-    reason_code: str | None,
-) -> tuple[ActionTool, dict[str, Any]]:
-    order_id = case.visible.order_id
-    if action is Action.REFUND:
-        return ActionTool.REFUND_ORDER, {"order_id": order_id}
-    if action is Action.RESHIP:
-        return ActionTool.RESHIP_ORDER, {"order_id": order_id}
-    if action is Action.REQUEST_INFO:
-        return ActionTool.REQUEST_INFORMATION, {
-            "order_id": order_id,
-            "field": _requested_field(reason_code),
-        }
-    if action is Action.WAIT:
-        return ActionTool.WAIT_FOR_CARRIER, {"order_id": order_id}
-    return ActionTool.ESCALATE_TO_HUMAN, {
-        "order_id": order_id,
-        "reason_code": reason_code or "HARNESS_FAIL_CLOSED",
-    }
-
-
-def _requested_field(reason_code: str | None) -> str:
-    normalized = (reason_code or "").upper()
-    if "DAMAGE" in normalized:
-        return "damage_evidence"
-    if "PAYMENT" in normalized or "CHARGE" in normalized or "DUPLICATE" in normalized:
-        return "payment_evidence"
-    return "additional_information"

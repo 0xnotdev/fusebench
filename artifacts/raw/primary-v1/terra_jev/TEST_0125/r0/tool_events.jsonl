@@ -1,0 +1,1 @@
+{"arguments":{"customer_id":"CUS-0125"},"attempt":1,"case_id":"TEST_0125","duration_ms":0.0243,"ended_at_ns":237533588299500,"infrastructure_retry":false,"result":{"customer_id":"CUS-0125","prior_exception_refunds_90d":0,"trusted_records_conflict":false},"result_kind":"success","started_at_ns":237533588275200,"system":"terra_jev","tool":"get_customer_risk"}

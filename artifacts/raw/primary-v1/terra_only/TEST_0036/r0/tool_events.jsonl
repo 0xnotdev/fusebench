@@ -1,0 +1,1 @@
+{"arguments":{"order_id":"ORD-0036"},"attempt":1,"case_id":"TEST_0036","duration_ms":0.004,"ended_at_ns":218103198848600,"infrastructure_retry":false,"result":{"error":{"kind":"unavailable","message":"get_damage_evidence returned unavailable","persistent":true}},"result_kind":"unavailable","started_at_ns":218103198844600,"system":"terra_only","tool":"get_damage_evidence"}

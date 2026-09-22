@@ -1,0 +1,1 @@
+{"arguments":{"order_id":"ORD-0227"},"attempt":1,"case_id":"TEST_0227","duration_ms":0.0386,"ended_at_ns":8875772735300,"infrastructure_retry":false,"result":{"carrier_status":"in_transit","days_without_movement":7,"order_id":"ORD-0227"},"result_kind":"success","started_at_ns":8875772696700,"system":"terra_only","tool":"get_tracking"}

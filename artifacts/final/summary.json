@@ -1,0 +1,1363 @@
+{
+  "bootstrap": {
+    "ci": "95% percentile",
+    "paired_resamples": 10000,
+    "seed": 8193800051343574363
+  },
+  "categories": [
+    {
+      "accuracy_difference_jev_minus_terra": 0.33333333333333337,
+      "cases": 30,
+      "category": "adversarial",
+      "terra_jev": {
+        "accuracy": 1.0,
+        "correct_count": 30,
+        "false_escalation_count": 0,
+        "false_escalation_denominator": 27,
+        "terminal_success_count": 30,
+        "unsafe_autonomous_count": 0
+      },
+      "terra_only": {
+        "accuracy": 0.6666666666666666,
+        "correct_count": 20,
+        "false_escalation_count": 0,
+        "false_escalation_denominator": 27,
+        "terminal_success_count": 20,
+        "unsafe_autonomous_count": 0
+      }
+    },
+    {
+      "accuracy_difference_jev_minus_terra": 0.5,
+      "cases": 30,
+      "category": "boundary",
+      "terra_jev": {
+        "accuracy": 1.0,
+        "correct_count": 30,
+        "false_escalation_count": 0,
+        "false_escalation_denominator": 28,
+        "terminal_success_count": 30,
+        "unsafe_autonomous_count": 0
+      },
+      "terra_only": {
+        "accuracy": 0.5,
+        "correct_count": 15,
+        "false_escalation_count": 4,
+        "false_escalation_denominator": 28,
+        "terminal_success_count": 16,
+        "unsafe_autonomous_count": 0
+      }
+    },
+    {
+      "accuracy_difference_jev_minus_terra": 0.3666666666666667,
+      "cases": 30,
+      "category": "clean",
+      "terra_jev": {
+        "accuracy": 0.9666666666666667,
+        "correct_count": 29,
+        "false_escalation_count": 0,
+        "false_escalation_denominator": 28,
+        "terminal_success_count": 29,
+        "unsafe_autonomous_count": 0
+      },
+      "terra_only": {
+        "accuracy": 0.6,
+        "correct_count": 18,
+        "false_escalation_count": 3,
+        "false_escalation_denominator": 28,
+        "terminal_success_count": 18,
+        "unsafe_autonomous_count": 0
+      }
+    },
+    {
+      "accuracy_difference_jev_minus_terra": 0.4,
+      "cases": 30,
+      "category": "conflicting_evidence",
+      "terra_jev": {
+        "accuracy": 1.0,
+        "correct_count": 30,
+        "false_escalation_count": 0,
+        "false_escalation_denominator": 0,
+        "terminal_success_count": 30,
+        "unsafe_autonomous_count": 0
+      },
+      "terra_only": {
+        "accuracy": 0.6,
+        "correct_count": 18,
+        "false_escalation_count": 0,
+        "false_escalation_denominator": 0,
+        "terminal_success_count": 29,
+        "unsafe_autonomous_count": 0
+      }
+    },
+    {
+      "accuracy_difference_jev_minus_terra": 0.4666666666666667,
+      "cases": 30,
+      "category": "missing_information",
+      "terra_jev": {
+        "accuracy": 0.8666666666666667,
+        "correct_count": 26,
+        "false_escalation_count": 0,
+        "false_escalation_denominator": 24,
+        "terminal_success_count": 26,
+        "unsafe_autonomous_count": 0
+      },
+      "terra_only": {
+        "accuracy": 0.4,
+        "correct_count": 12,
+        "false_escalation_count": 3,
+        "false_escalation_denominator": 24,
+        "terminal_success_count": 17,
+        "unsafe_autonomous_count": 0
+      }
+    },
+    {
+      "accuracy_difference_jev_minus_terra": 0.5,
+      "cases": 30,
+      "category": "multi_tool",
+      "terra_jev": {
+        "accuracy": 1.0,
+        "correct_count": 30,
+        "false_escalation_count": 0,
+        "false_escalation_denominator": 30,
+        "terminal_success_count": 30,
+        "unsafe_autonomous_count": 0
+      },
+      "terra_only": {
+        "accuracy": 0.5,
+        "correct_count": 15,
+        "false_escalation_count": 2,
+        "false_escalation_denominator": 30,
+        "terminal_success_count": 15,
+        "unsafe_autonomous_count": 0
+      }
+    },
+    {
+      "accuracy_difference_jev_minus_terra": 0.4,
+      "cases": 30,
+      "category": "tool_failure",
+      "terra_jev": {
+        "accuracy": 1.0,
+        "correct_count": 30,
+        "false_escalation_count": 0,
+        "false_escalation_denominator": 27,
+        "terminal_success_count": 30,
+        "unsafe_autonomous_count": 0
+      },
+      "terra_only": {
+        "accuracy": 0.6,
+        "correct_count": 18,
+        "false_escalation_count": 1,
+        "false_escalation_denominator": 27,
+        "terminal_success_count": 18,
+        "unsafe_autonomous_count": 0
+      }
+    },
+    {
+      "accuracy_difference_jev_minus_terra": 0.6,
+      "cases": 30,
+      "category": "tool_selection",
+      "terra_jev": {
+        "accuracy": 1.0,
+        "correct_count": 30,
+        "false_escalation_count": 0,
+        "false_escalation_denominator": 28,
+        "terminal_success_count": 30,
+        "unsafe_autonomous_count": 0
+      },
+      "terra_only": {
+        "accuracy": 0.4,
+        "correct_count": 12,
+        "false_escalation_count": 2,
+        "false_escalation_denominator": 28,
+        "terminal_success_count": 13,
+        "unsafe_autonomous_count": 0
+      }
+    }
+  ],
+  "full_system_secondary": {
+    "terra_jev": {
+      "full_response_latency_median_ms": 7014.92755,
+      "full_response_latency_p95_ms": 121446.0992,
+      "full_system_terra_input_tokens": 2187803,
+      "full_system_terra_output_tokens": 4132,
+      "normalized_full_system_cost_per_1000_usd": 18.54453731666667,
+      "responder_input_tokens": 2187803,
+      "responder_output_tokens": 4132
+    },
+    "terra_only": {
+      "full_response_latency_median_ms": 22443.238100000002,
+      "full_response_latency_p95_ms": 240032.020695,
+      "full_system_terra_input_tokens": 4619169,
+      "full_system_terra_output_tokens": 18727,
+      "normalized_full_system_cost_per_1000_usd": 39.429425,
+      "responder_input_tokens": 2187563,
+      "responder_output_tokens": 4724
+    }
+  },
+  "infrastructure": {
+    "cp14_errors": {
+      "by_system": {
+        "terra_jev": {
+          "invalid_probability_distribution": 0,
+          "invalid_terminal_output": 1,
+          "model_version_changed": 0,
+          "provider_error": 0,
+          "provider_http_error": 0,
+          "provider_timeout": 0,
+          "provider_usage_limit": 0,
+          "response_invalid_response_output": 0,
+          "response_provider_error": 0,
+          "response_provider_timeout": 70
+        },
+        "terra_only": {
+          "invalid_probability_distribution": 0,
+          "invalid_terminal_output": 12,
+          "model_version_changed": 0,
+          "provider_error": 0,
+          "provider_http_error": 0,
+          "provider_timeout": 69,
+          "provider_usage_limit": 0,
+          "response_invalid_response_output": 0,
+          "response_provider_error": 0,
+          "response_provider_timeout": 70
+        }
+      },
+      "harness_failures": 0,
+      "invocations": 3,
+      "observed_provider_retry_events": 0,
+      "resumptions": 2,
+      "simulator_tool_infrastructure_retries": {
+        "terra_jev": 25,
+        "terra_only": 15
+      },
+      "terminal_or_session_interruptions": 1,
+      "typesafe_internal_retry_attempt_telemetry_available": false,
+      "typesafe_retry_policy_max_attempts": 3,
+      "usage_limit_events": 1
+    },
+    "terra_only_decision_timeouts": 69
+  },
+  "integrity": {
+    "aborted_unscored_jev_input_tokens": 2506,
+    "all_provider_attempt_raw_evidence_complete": false,
+    "category_counts": {
+      "adversarial": 30,
+      "boundary": 30,
+      "clean": 30,
+      "conflicting_evidence": 30,
+      "missing_information": 30,
+      "multi_tool": 30,
+      "tool_failure": 30,
+      "tool_selection": 30
+    },
+    "checksums_manifest_sha256": "a253e524af5b3995fb04f8c8249f5d9643867e28d7d7e6e40482b3a2989216ee",
+    "completed_record_raw_evidence_complete": true,
+    "completed_record_raw_files_verified": true,
+    "freeze_verifier": {
+      "case_count": 240,
+      "critical_file_count": 834,
+      "dataset_sha256": "c47099493205a239950233962bf4a23802db181d4c3c6aaa81dfe9257db331fb",
+      "errors": [],
+      "passed": true,
+      "repeatability_selection_sha256": "ee29b1fc6e06b014c18fe71631e63f90eaf0085d2f57bc5d39a840c0e1825acc",
+      "test_inference_calls_at_freeze": 0
+    },
+    "gold_action_counts": {
+      "ESCALATE": 48,
+      "REFUND": 48,
+      "REQUEST_INFO": 48,
+      "RESHIP": 48,
+      "WAIT": 48
+    },
+    "pairs": 240,
+    "provider_calls_during_analysis": 0,
+    "raw_tree_checksum_map_sha256": "2f93286598a22bc91560379b52987acec8e59a777fc2fd2dc9395433a4b0339a",
+    "record_hash_ledger_verified": true,
+    "record_hashes_sha256": "9b024e626b58248bf8236451d42471265e89bb147e0ae8dbd7aaeeaabc5b2d3e",
+    "records_sha256": "c4a6f1e8f1bcb39da9ee41dcae514a3d38e1cd3c2abb4eac4052d6c58f4102c2",
+    "run_checksums_verified": true,
+    "schedule_order_verified": true,
+    "scored_records": 480
+  },
+  "jev_estimated_promotional_credit_consumption_usd": 0.025604208,
+  "jev_provider_credit_balance_verified": false,
+  "mcnemar": {
+    "both_correct": 126,
+    "both_wrong": 3,
+    "exact_p_value": 4.789402585702178e-30,
+    "terra_jev_correct": 109,
+    "terra_only_correct": 2
+  },
+  "paired_effects": {
+    "accuracy": {
+      "ci95_lower": 0.3833333333333333,
+      "ci95_upper": 0.5083333333333333,
+      "paired_difference_jev_minus_terra": 0.4458333333333333,
+      "terra_jev": 0.9791666666666666,
+      "terra_only": 0.5333333333333333
+    },
+    "brier": {
+      "ci95_lower": -0.4788460016057741,
+      "ci95_upper": -0.2333090152934123,
+      "paired_difference_jev_minus_terra": -0.3520483853696505,
+      "terra_jev": 0.02754180450376723,
+      "terra_only": 0.37959018987341775
+    },
+    "business_loss": {
+      "ci95_lower": -3.458333333333333,
+      "ci95_upper": -2.5,
+      "paired_difference_jev_minus_terra": -2.975,
+      "terra_jev": 0.11666666666666667,
+      "terra_only": 3.091666666666667
+    },
+    "ece": {
+      "ci95_lower": -0.21588909718565472,
+      "ci95_upper": -0.09305249591491219,
+      "paired_difference_jev_minus_terra": -0.1563441897391371,
+      "terra_jev": 0.03340264570390098,
+      "terra_only": 0.18974683544303808
+    },
+    "extra_tools": {
+      "ci95_lower": 0.5499999999999999,
+      "ci95_upper": 0.75,
+      "paired_difference_jev_minus_terra": 0.6499999999999999,
+      "terra_jev": 0.6666666666666666,
+      "terra_only": 0.016666666666666666
+    },
+    "false_escalation": {
+      "ci95_lower": -0.11855670103092783,
+      "ci95_upper": -0.042328042328042326,
+      "paired_difference_jev_minus_terra": -0.078125,
+      "terra_jev": 0.0,
+      "terra_only": 0.078125
+    },
+    "high_conf_error_90": {
+      "ci95_lower": -0.2531666118691435,
+      "ci95_upper": -0.13125,
+      "paired_difference_jev_minus_terra": -0.189873417721519,
+      "terra_jev": 0.0,
+      "terra_only": 0.189873417721519
+    },
+    "high_conf_error_95": {
+      "ci95_lower": -0.2531666118691435,
+      "ci95_upper": -0.13125,
+      "paired_difference_jev_minus_terra": -0.189873417721519,
+      "terra_jev": 0.0,
+      "terra_only": 0.189873417721519
+    },
+    "high_conf_error_99": {
+      "ci95_lower": -0.2531666118691435,
+      "ci95_upper": -0.13125,
+      "paired_difference_jev_minus_terra": -0.189873417721519,
+      "terra_jev": 0.0,
+      "terra_only": 0.189873417721519
+    },
+    "latency_median_ms": {
+      "ci95_lower": -16856.4545,
+      "ci95_upper": -14568.259611250001,
+      "paired_difference_jev_minus_terra": -15979.72825,
+      "terra_jev": 1336.6544,
+      "terra_only": 17316.38265
+    },
+    "latency_p95_ms": {
+      "ci95_lower": -117961.219934875,
+      "ci95_upper": -117015.63948499999,
+      "paired_difference_jev_minus_terra": -117723.58776,
+      "terra_jev": 2299.3617549999985,
+      "terra_only": 120022.949515
+    },
+    "nll": {
+      "ci95_lower": -6.768994905556776,
+      "ci95_upper": -3.43142638968522,
+      "paired_difference_jev_minus_terra": -5.044278189621033,
+      "terra_jev": 0.06522261572636795,
+      "terra_only": 5.109500805347401
+    },
+    "normalized_cost_per_1000": {
+      "ci95_lower": -22.504545694999997,
+      "ci95_upper": -19.12427321625,
+      "paired_difference_jev_minus_terra": -20.85728768333333,
+      "terra_jev": 0.10624565,
+      "terra_only": 20.96353333333333
+    },
+    "terminal_success": {
+      "ci95_lower": 0.3041666666666667,
+      "ci95_upper": 0.4375,
+      "paired_difference_jev_minus_terra": 0.37083333333333335,
+      "terra_jev": 0.9791666666666666,
+      "terra_only": 0.6083333333333333
+    },
+    "tool_calls": {
+      "ci95_lower": 0.7625000000000002,
+      "ci95_upper": 1.1624999999999999,
+      "paired_difference_jev_minus_terra": 0.9583333333333335,
+      "terra_jev": 2.6375,
+      "terra_only": 1.6791666666666667
+    },
+    "unsafe_rate": {
+      "ci95_lower": 0.0,
+      "ci95_upper": 0.0,
+      "paired_difference_jev_minus_terra": 0.0,
+      "terra_jev": 0.0,
+      "terra_only": 0.0
+    }
+  },
+  "plots": [
+    "risk_coverage.png",
+    "calibration.png",
+    "latency_cost.png"
+  ],
+  "primary_seed": 8193800051343574363,
+  "provider_inference_calls_during_analysis": 0,
+  "repeatability_executed": false,
+  "responder_tokens": {
+    "cached_input": 3711744,
+    "input": 4375366,
+    "output": 8856,
+    "reasoning_output": 540
+  },
+  "run_id": "primary-v1",
+  "safety_upper_bound_95": 0.015252810401278712,
+  "scope": "CP-14 primary records only; CP-15 terminated by user",
+  "sensitivity": {
+    "no_terra_decision_timeout_case_count": 171,
+    "terra_jev_accuracy_on_same_cases": 0.9883040935672515,
+    "terra_only_accuracy_no_timeout": 0.7485380116959064
+  },
+  "systems": {
+    "terra_jev": {
+      "calibration": {
+        "bins": [
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 0,
+            "lower": 0.0,
+            "mean_confidence": null,
+            "upper": 0.1
+          },
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 1,
+            "lower": 0.1,
+            "mean_confidence": null,
+            "upper": 0.2
+          },
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 2,
+            "lower": 0.2,
+            "mean_confidence": null,
+            "upper": 0.3
+          },
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 3,
+            "lower": 0.3,
+            "mean_confidence": null,
+            "upper": 0.4
+          },
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 4,
+            "lower": 0.4,
+            "mean_confidence": null,
+            "upper": 0.5
+          },
+          {
+            "count": 6,
+            "empirical_accuracy": 0.6666666666666666,
+            "index": 5,
+            "lower": 0.5,
+            "mean_confidence": 0.5516666666666666,
+            "upper": 0.6
+          },
+          {
+            "count": 3,
+            "empirical_accuracy": 0.6666666666666666,
+            "index": 6,
+            "lower": 0.6,
+            "mean_confidence": 0.6555892255892256,
+            "upper": 0.7
+          },
+          {
+            "count": 11,
+            "empirical_accuracy": 0.9090909090909091,
+            "index": 7,
+            "lower": 0.7,
+            "mean_confidence": 0.7545454545454545,
+            "upper": 0.8
+          },
+          {
+            "count": 6,
+            "empirical_accuracy": 1.0,
+            "index": 8,
+            "lower": 0.8,
+            "mean_confidence": 0.8316666666666667,
+            "upper": 0.9
+          },
+          {
+            "count": 213,
+            "empirical_accuracy": 1.0,
+            "index": 9,
+            "lower": 0.9,
+            "mean_confidence": 0.9786384976525822,
+            "upper": 1.0
+          }
+        ],
+        "ece": 0.03340264570390094,
+        "high_confidence": {
+          "0.9": {
+            "count": 213,
+            "error_rate": 0.0,
+            "threshold": 0.9
+          },
+          "0.95": {
+            "count": 200,
+            "error_rate": 0.0,
+            "threshold": 0.95
+          },
+          "0.99": {
+            "count": 105,
+            "error_rate": 0.0,
+            "threshold": 0.99
+          }
+        },
+        "multiclass_brier": 0.02754180450376723,
+        "negative_log_likelihood": 0.06522261572636795,
+        "scored_count": 239
+      },
+      "correctness": {
+        "accuracy": 0.9791666666666666,
+        "adversarial_accuracy": 1.0,
+        "adversarial_action_failure_rate": 0.0,
+        "adversarial_count": 30,
+        "adversarial_unsafe_action_rate": 0.0,
+        "case_count": 240,
+        "correct_count": 235,
+        "false_escalation_count": 0,
+        "false_escalation_rate": 0.0,
+        "hallucinated_state_incidents": 0,
+        "invalid_raw_count": 1,
+        "mean_business_loss": 0.11666666666666667,
+        "median_business_loss": 0.0,
+        "non_escalation_gold_count": 192,
+        "persistent_failure_accuracy": 0.5555555555555556,
+        "persistent_failure_correct": 5,
+        "persistent_failure_count": 9,
+        "terminal_success_count": 235,
+        "terminal_success_rate": 0.9791666666666666,
+        "unsafe_autonomous_count": 0,
+        "unsafe_autonomous_rate": 0.0,
+        "unsafe_possible_count": 240,
+        "unsafe_rate_among_possible": 0.0
+      },
+      "coverage": {
+        "at_most_2pct_action_error": {
+          "action_error_count": 4,
+          "action_error_rate": 0.016736401673640166,
+          "coverage": 0.9958333333333333,
+          "covered_count": 239,
+          "threshold": 0.52,
+          "unsafe_error_count": 0,
+          "unsafe_error_rate": 0.0
+        },
+        "continuous_tie_aware": [
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.0875,
+            "covered_count": 21,
+            "threshold": 1.0,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.4375,
+            "covered_count": 105,
+            "threshold": 0.99,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.625,
+            "covered_count": 150,
+            "threshold": 0.98,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.7083333333333334,
+            "covered_count": 170,
+            "threshold": 0.97,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.775,
+            "covered_count": 186,
+            "threshold": 0.96,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.8333333333333334,
+            "covered_count": 200,
+            "threshold": 0.95,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.85,
+            "covered_count": 204,
+            "threshold": 0.9400000000000001,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.8666666666666667,
+            "covered_count": 208,
+            "threshold": 0.94,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.8791666666666667,
+            "covered_count": 211,
+            "threshold": 0.93,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.8833333333333333,
+            "covered_count": 212,
+            "threshold": 0.92,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.8875,
+            "covered_count": 213,
+            "threshold": 0.9,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.8916666666666667,
+            "covered_count": 214,
+            "threshold": 0.89,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.9,
+            "covered_count": 216,
+            "threshold": 0.84,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.9041666666666667,
+            "covered_count": 217,
+            "threshold": 0.82,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.9125,
+            "covered_count": 219,
+            "threshold": 0.8,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.9208333333333333,
+            "covered_count": 221,
+            "threshold": 0.78,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.9291666666666667,
+            "covered_count": 223,
+            "threshold": 0.77,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.9333333333333333,
+            "covered_count": 224,
+            "threshold": 0.76,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.9416666666666667,
+            "covered_count": 226,
+            "threshold": 0.75,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 1,
+            "action_error_rate": 0.004366812227074236,
+            "coverage": 0.9541666666666667,
+            "covered_count": 229,
+            "threshold": 0.74,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 1,
+            "action_error_rate": 0.004347826086956522,
+            "coverage": 0.9583333333333334,
+            "covered_count": 230,
+            "threshold": 0.72,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 1,
+            "action_error_rate": 0.004329004329004329,
+            "coverage": 0.9625,
+            "covered_count": 231,
+            "threshold": 0.6767676767676767,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 1,
+            "action_error_rate": 0.004310344827586207,
+            "coverage": 0.9666666666666667,
+            "covered_count": 232,
+            "threshold": 0.66,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 2,
+            "action_error_rate": 0.008583690987124463,
+            "coverage": 0.9708333333333333,
+            "covered_count": 233,
+            "threshold": 0.63,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 2,
+            "action_error_rate": 0.008547008547008548,
+            "coverage": 0.975,
+            "covered_count": 234,
+            "threshold": 0.58,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 2,
+            "action_error_rate": 0.00851063829787234,
+            "coverage": 0.9791666666666666,
+            "covered_count": 235,
+            "threshold": 0.57,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 3,
+            "action_error_rate": 0.012658227848101266,
+            "coverage": 0.9875,
+            "covered_count": 237,
+            "threshold": 0.56,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 4,
+            "action_error_rate": 0.016736401673640166,
+            "coverage": 0.9958333333333333,
+            "covered_count": 239,
+            "threshold": 0.52,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          }
+        ],
+        "threshold_sweep": [
+          {
+            "action_error_count": 4,
+            "action_error_rate": 0.016736401673640166,
+            "coverage": 0.9958333333333333,
+            "covered_count": 239,
+            "threshold": 0.5,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 3,
+            "action_error_rate": 0.012658227848101266,
+            "coverage": 0.9875,
+            "covered_count": 237,
+            "threshold": 0.55,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 2,
+            "action_error_rate": 0.008583690987124463,
+            "coverage": 0.9708333333333333,
+            "covered_count": 233,
+            "threshold": 0.6,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 1,
+            "action_error_rate": 0.004310344827586207,
+            "coverage": 0.9666666666666667,
+            "covered_count": 232,
+            "threshold": 0.65,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 1,
+            "action_error_rate": 0.004347826086956522,
+            "coverage": 0.9583333333333334,
+            "covered_count": 230,
+            "threshold": 0.7,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.9416666666666667,
+            "covered_count": 226,
+            "threshold": 0.75,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.9125,
+            "covered_count": 219,
+            "threshold": 0.8,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.8916666666666667,
+            "covered_count": 214,
+            "threshold": 0.85,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.8875,
+            "covered_count": 213,
+            "threshold": 0.9,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.8833333333333333,
+            "covered_count": 212,
+            "threshold": 0.92,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.8666666666666667,
+            "covered_count": 208,
+            "threshold": 0.94,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.8333333333333334,
+            "covered_count": 200,
+            "threshold": 0.95,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.775,
+            "covered_count": 186,
+            "threshold": 0.96,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.7083333333333334,
+            "covered_count": 170,
+            "threshold": 0.97,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.625,
+            "covered_count": 150,
+            "threshold": 0.98,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 0,
+            "action_error_rate": 0.0,
+            "coverage": 0.4375,
+            "covered_count": 105,
+            "threshold": 0.99,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          }
+        ],
+        "valid_probability_count": 239,
+        "zero_observed_unsafe": {
+          "action_error_count": 4,
+          "action_error_rate": 0.016736401673640166,
+          "coverage": 0.9958333333333333,
+          "covered_count": 239,
+          "threshold": 0.52,
+          "unsafe_error_count": 0,
+          "unsafe_error_rate": 0.0
+        },
+        "zero_unsafe_caveat": "0 observed unsafe errors in covered test cases does not establish zero true risk."
+      },
+      "efficiency": {
+        "case_count": 240,
+        "cost_basis": "Terra API-equivalent normalization; Jev promotional-credit estimate",
+        "decision_latency_p50_ms": 1336.6544,
+        "decision_latency_p90_ms": 1711.81334,
+        "decision_latency_p95_ms": 2299.3617549999985,
+        "decision_latency_p99_ms": 3825.13505699999,
+        "jev_input_tokens": 607118,
+        "jev_output_tokens": 59455,
+        "jev_promotional_credit_cost_usd": 0.025498956,
+        "normalized_cost_per_1000_cases_usd": 0.10624565,
+        "terra_actual_marginal_spend_usd": 0.0,
+        "terra_input_tokens": 0,
+        "terra_normalized_api_cost_usd": 0.0,
+        "terra_output_tokens": 0
+      },
+      "model_format_invalid_terminal_count": 1,
+      "probability_distribution_count": 239,
+      "safe_executed_autonomous_count": 96,
+      "tools": {
+        "cases_with_extra_tools_rate": 0.4625,
+        "invalid_tool_call_count": 0,
+        "invalid_tool_call_rate": 0.0,
+        "mean_extra_tools_per_case": 0.6666666666666666,
+        "mean_model_requested_reads": 2.6375,
+        "mean_necessary_tool_recall": 0.9956896551724138,
+        "required_applicable_cases": 232,
+        "total_extra_tools": 160,
+        "total_infrastructure_retries": 25,
+        "total_model_requested_reads": 633
+      }
+    },
+    "terra_only": {
+      "calibration": {
+        "bins": [
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 0,
+            "lower": 0.0,
+            "mean_confidence": null,
+            "upper": 0.1
+          },
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 1,
+            "lower": 0.1,
+            "mean_confidence": null,
+            "upper": 0.2
+          },
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 2,
+            "lower": 0.2,
+            "mean_confidence": null,
+            "upper": 0.3
+          },
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 3,
+            "lower": 0.3,
+            "mean_confidence": null,
+            "upper": 0.4
+          },
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 4,
+            "lower": 0.4,
+            "mean_confidence": null,
+            "upper": 0.5
+          },
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 5,
+            "lower": 0.5,
+            "mean_confidence": null,
+            "upper": 0.6
+          },
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 6,
+            "lower": 0.6,
+            "mean_confidence": null,
+            "upper": 0.7
+          },
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 7,
+            "lower": 0.7,
+            "mean_confidence": null,
+            "upper": 0.8
+          },
+          {
+            "count": 0,
+            "empirical_accuracy": null,
+            "index": 8,
+            "lower": 0.8,
+            "mean_confidence": null,
+            "upper": 0.9
+          },
+          {
+            "count": 158,
+            "empirical_accuracy": 0.810126582278481,
+            "index": 9,
+            "lower": 0.9,
+            "mean_confidence": 0.9998734177215189,
+            "upper": 1.0
+          }
+        ],
+        "ece": 0.18974683544303794,
+        "high_confidence": {
+          "0.9": {
+            "count": 158,
+            "error_rate": 0.189873417721519,
+            "threshold": 0.9
+          },
+          "0.95": {
+            "count": 158,
+            "error_rate": 0.189873417721519,
+            "threshold": 0.95
+          },
+          "0.99": {
+            "count": 158,
+            "error_rate": 0.189873417721519,
+            "threshold": 0.99
+          }
+        },
+        "multiclass_brier": 0.37959018987341775,
+        "negative_log_likelihood": 5.109500805347401,
+        "scored_count": 158
+      },
+      "correctness": {
+        "accuracy": 0.5333333333333333,
+        "adversarial_accuracy": 0.6666666666666666,
+        "adversarial_action_failure_rate": 0.33333333333333337,
+        "adversarial_count": 30,
+        "adversarial_unsafe_action_rate": 0.0,
+        "case_count": 240,
+        "correct_count": 128,
+        "false_escalation_count": 15,
+        "false_escalation_rate": 0.078125,
+        "hallucinated_state_incidents": 0,
+        "invalid_raw_count": 82,
+        "mean_business_loss": 3.091666666666667,
+        "median_business_loss": 0.0,
+        "non_escalation_gold_count": 192,
+        "persistent_failure_accuracy": 0.4444444444444444,
+        "persistent_failure_correct": 4,
+        "persistent_failure_count": 9,
+        "terminal_success_count": 146,
+        "terminal_success_rate": 0.6083333333333333,
+        "unsafe_autonomous_count": 0,
+        "unsafe_autonomous_rate": 0.0,
+        "unsafe_possible_count": 240,
+        "unsafe_rate_among_possible": 0.0
+      },
+      "coverage": {
+        "at_most_2pct_action_error": null,
+        "continuous_tie_aware": [
+          {
+            "action_error_count": 29,
+            "action_error_rate": 0.1858974358974359,
+            "coverage": 0.65,
+            "covered_count": 156,
+            "threshold": 1.0,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.99,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          }
+        ],
+        "threshold_sweep": [
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.5,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.55,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.6,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.65,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.7,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.75,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.8,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.85,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.9,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.92,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.94,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.95,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.96,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.97,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.98,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          },
+          {
+            "action_error_count": 30,
+            "action_error_rate": 0.189873417721519,
+            "coverage": 0.6583333333333333,
+            "covered_count": 158,
+            "threshold": 0.99,
+            "unsafe_error_count": 0,
+            "unsafe_error_rate": 0.0
+          }
+        ],
+        "valid_probability_count": 158,
+        "zero_observed_unsafe": {
+          "action_error_count": 30,
+          "action_error_rate": 0.189873417721519,
+          "coverage": 0.6583333333333333,
+          "covered_count": 158,
+          "threshold": 0.99,
+          "unsafe_error_count": 0,
+          "unsafe_error_rate": 0.0
+        },
+        "zero_unsafe_caveat": "0 observed unsafe errors in covered test cases does not establish zero true risk."
+      },
+      "efficiency": {
+        "case_count": 240,
+        "cost_basis": "Terra API-equivalent normalization; Jev promotional-credit estimate",
+        "decision_latency_p50_ms": 17316.38265,
+        "decision_latency_p90_ms": 120014.65028,
+        "decision_latency_p95_ms": 120022.949515,
+        "decision_latency_p99_ms": 120102.524389,
+        "jev_input_tokens": 0,
+        "jev_output_tokens": 0,
+        "jev_promotional_credit_cost_usd": 0.0,
+        "normalized_cost_per_1000_cases_usd": 20.963533333333334,
+        "terra_actual_marginal_spend_usd": 0.0,
+        "terra_input_tokens": 2431606,
+        "terra_normalized_api_cost_usd": 5.031248,
+        "terra_output_tokens": 14003
+      },
+      "model_format_invalid_terminal_count": 12,
+      "probability_distribution_count": 158,
+      "safe_executed_autonomous_count": 47,
+      "tools": {
+        "cases_with_extra_tools_rate": 0.008333333333333333,
+        "invalid_tool_call_count": 0,
+        "invalid_tool_call_rate": 0.0,
+        "mean_extra_tools_per_case": 0.016666666666666666,
+        "mean_model_requested_reads": 1.6791666666666667,
+        "mean_necessary_tool_recall": 0.5912356321839081,
+        "required_applicable_cases": 232,
+        "total_extra_tools": 4,
+        "total_infrastructure_retries": 15,
+        "total_model_requested_reads": 403
+      }
+    }
+  },
+  "terra_full_system_tokens": {
+    "cached_input": 5955328,
+    "input": 6806972,
+    "output": 22859,
+    "reasoning_output": 5496
+  }
+}

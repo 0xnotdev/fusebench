@@ -1,0 +1,130 @@
+section,group,metric,terra_only,terra_jev,difference_jev_minus_terra,ci95_lower,ci95_upper,denominator_note
+overall,all,accuracy,0.5333333333333333,0.9791666666666666,0.4458333333333333,0.3833333333333333,0.5083333333333333,all 240 cases
+overall,all,terminal_success,0.6083333333333333,0.9791666666666666,0.37083333333333335,0.3041666666666667,0.4375,all 240 cases
+overall,all,unsafe_rate,0.0,0.0,0.0,0.0,0.0,all 240 cases
+overall,all,false_escalation,0.078125,0.0,-0.078125,-0.11855670103092783,-0.042328042328042326,non-escalation gold cases
+overall,all,brier,0.37959018987341775,0.02754180450376723,-0.3520483853696505,-0.4788460016057741,-0.2333090152934123,valid probability records only
+overall,all,nll,5.109500805347401,0.06522261572636795,-5.044278189621033,-6.768994905556776,-3.43142638968522,valid probability records only
+overall,all,high_conf_error_90,0.189873417721519,0.0,-0.189873417721519,-0.2531666118691435,-0.13125,valid probability records only
+overall,all,high_conf_error_95,0.189873417721519,0.0,-0.189873417721519,-0.2531666118691435,-0.13125,valid probability records only
+overall,all,high_conf_error_99,0.189873417721519,0.0,-0.189873417721519,-0.2531666118691435,-0.13125,valid probability records only
+overall,all,latency_median_ms,17316.38265,1336.6544,-15979.72825,-16856.4545,-14568.259611250001,all 240 cases
+overall,all,latency_p95_ms,120022.949515,2299.3617549999985,-117723.58776,-117961.219934875,-117015.63948499999,all 240 cases
+overall,all,tool_calls,1.6791666666666667,2.6375,0.9583333333333335,0.7625000000000002,1.1624999999999999,all 240 cases
+overall,all,extra_tools,0.016666666666666666,0.6666666666666666,0.6499999999999999,0.5499999999999999,0.75,all 240 cases
+overall,all,business_loss,3.091666666666667,0.11666666666666667,-2.975,-3.458333333333333,-2.5,all 240 cases
+overall,all,normalized_cost_per_1000,20.96353333333333,0.10624565,-20.85728768333333,-22.504545694999997,-19.12427321625,all 240 cases
+overall,all,ece,0.18974683544303808,0.03340264570390098,-0.1563441897391371,-0.21588909718565472,-0.09305249591491219,valid probability records only
+overall,all,safe_executed_autonomous_count,47,96,49,,,out of 240 cases per system
+overall,all,invalid_terminal_output_count,12,1,-11,,,all 240 cases per system
+overall,all,invalid_or_no_decision_count,82,1,-81,,,all 240 cases per system
+overall,all,terra_decision_input_tokens,2431606,0,-2431606,,,decision path only
+overall,all,terra_decision_output_tokens,14003,0,-14003,,,decision path only
+overall,all,jev_decision_input_tokens,0,607118,607118,,,completed records only
+overall,all,jev_decision_output_tokens,0,59455,59455,,,completed records only
+overall,all,coverage_at_most_2pct_action_error,0,0.9958333333333333,0.9958333333333333,,,all 240 cases; offline gate
+overall,all,coverage_zero_observed_unsafe,0.6583333333333333,0.9958333333333333,0.3375,,,all 240 cases; offline gate
+overall,all,normalized_full_system_cost_per_1000_usd,39.429425,18.54453731666667,-20.884887683333332,,,secondary; includes shared Terra responder
+overall,all,jev_promotional_credit_consumption_usd,0,0.025604208,0.025604208,,,estimated from usage; includes unscored interrupted attempt; provider balance unverified
+category,adversarial,accuracy,0.6666666666666666,1.0,0.33333333333333337,,,30 cases per system
+category,adversarial,terminal_success_count,20,30,10,,,30 cases per system
+category,adversarial,unsafe_autonomous_count,0,0,0,,,30 cases per system
+category,boundary,accuracy,0.5,1.0,0.5,,,30 cases per system
+category,boundary,terminal_success_count,16,30,14,,,30 cases per system
+category,boundary,unsafe_autonomous_count,0,0,0,,,30 cases per system
+category,clean,accuracy,0.6,0.9666666666666667,0.3666666666666667,,,30 cases per system
+category,clean,terminal_success_count,18,29,11,,,30 cases per system
+category,clean,unsafe_autonomous_count,0,0,0,,,30 cases per system
+category,conflicting_evidence,accuracy,0.6,1.0,0.4,,,30 cases per system
+category,conflicting_evidence,terminal_success_count,29,30,1,,,30 cases per system
+category,conflicting_evidence,unsafe_autonomous_count,0,0,0,,,30 cases per system
+category,missing_information,accuracy,0.4,0.8666666666666667,0.4666666666666667,,,30 cases per system
+category,missing_information,terminal_success_count,17,26,9,,,30 cases per system
+category,missing_information,unsafe_autonomous_count,0,0,0,,,30 cases per system
+category,multi_tool,accuracy,0.5,1.0,0.5,,,30 cases per system
+category,multi_tool,terminal_success_count,15,30,15,,,30 cases per system
+category,multi_tool,unsafe_autonomous_count,0,0,0,,,30 cases per system
+category,tool_failure,accuracy,0.6,1.0,0.4,,,30 cases per system
+category,tool_failure,terminal_success_count,18,30,12,,,30 cases per system
+category,tool_failure,unsafe_autonomous_count,0,0,0,,,30 cases per system
+category,tool_selection,accuracy,0.4,1.0,0.6,,,30 cases per system
+category,tool_selection,terminal_success_count,13,30,17,,,30 cases per system
+category,tool_selection,unsafe_autonomous_count,0,0,0,,,30 cases per system
+calibration_bin,0.0-0.1,count,0,0,0,,,valid probability records in this top-label bin
+calibration_bin,0.0-0.1,mean_confidence,,,,,,valid probability records in this top-label bin
+calibration_bin,0.0-0.1,empirical_accuracy,,,,,,valid probability records in this top-label bin
+calibration_bin,0.1-0.2,count,0,0,0,,,valid probability records in this top-label bin
+calibration_bin,0.1-0.2,mean_confidence,,,,,,valid probability records in this top-label bin
+calibration_bin,0.1-0.2,empirical_accuracy,,,,,,valid probability records in this top-label bin
+calibration_bin,0.2-0.3,count,0,0,0,,,valid probability records in this top-label bin
+calibration_bin,0.2-0.3,mean_confidence,,,,,,valid probability records in this top-label bin
+calibration_bin,0.2-0.3,empirical_accuracy,,,,,,valid probability records in this top-label bin
+calibration_bin,0.3-0.4,count,0,0,0,,,valid probability records in this top-label bin
+calibration_bin,0.3-0.4,mean_confidence,,,,,,valid probability records in this top-label bin
+calibration_bin,0.3-0.4,empirical_accuracy,,,,,,valid probability records in this top-label bin
+calibration_bin,0.4-0.5,count,0,0,0,,,valid probability records in this top-label bin
+calibration_bin,0.4-0.5,mean_confidence,,,,,,valid probability records in this top-label bin
+calibration_bin,0.4-0.5,empirical_accuracy,,,,,,valid probability records in this top-label bin
+calibration_bin,0.5-0.6,count,0,6,6,,,valid probability records in this top-label bin
+calibration_bin,0.5-0.6,mean_confidence,,0.5516666666666666,,,,valid probability records in this top-label bin
+calibration_bin,0.5-0.6,empirical_accuracy,,0.6666666666666666,,,,valid probability records in this top-label bin
+calibration_bin,0.6-0.7,count,0,3,3,,,valid probability records in this top-label bin
+calibration_bin,0.6-0.7,mean_confidence,,0.6555892255892256,,,,valid probability records in this top-label bin
+calibration_bin,0.6-0.7,empirical_accuracy,,0.6666666666666666,,,,valid probability records in this top-label bin
+calibration_bin,0.7-0.8,count,0,11,11,,,valid probability records in this top-label bin
+calibration_bin,0.7-0.8,mean_confidence,,0.7545454545454545,,,,valid probability records in this top-label bin
+calibration_bin,0.7-0.8,empirical_accuracy,,0.9090909090909091,,,,valid probability records in this top-label bin
+calibration_bin,0.8-0.9,count,0,6,6,,,valid probability records in this top-label bin
+calibration_bin,0.8-0.9,mean_confidence,,0.8316666666666667,,,,valid probability records in this top-label bin
+calibration_bin,0.8-0.9,empirical_accuracy,,1.0,,,,valid probability records in this top-label bin
+calibration_bin,0.9-1.0,count,158,213,55,,,valid probability records in this top-label bin
+calibration_bin,0.9-1.0,mean_confidence,0.9998734177215189,0.9786384976525822,-0.02123492006893679,,,valid probability records in this top-label bin
+calibration_bin,0.9-1.0,empirical_accuracy,0.810126582278481,1.0,0.189873417721519,,,valid probability records in this top-label bin
+risk_threshold,0.5,coverage,0.6583333333333333,0.9958333333333333,0.3375,,,coverage/all 240; errors/covered
+risk_threshold,0.5,action_error_rate,0.189873417721519,0.016736401673640166,-0.17313701604787884,,,coverage/all 240; errors/covered
+risk_threshold,0.5,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.55,coverage,0.6583333333333333,0.9875,0.3291666666666667,,,coverage/all 240; errors/covered
+risk_threshold,0.55,action_error_rate,0.189873417721519,0.012658227848101266,-0.17721518987341772,,,coverage/all 240; errors/covered
+risk_threshold,0.55,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.6,coverage,0.6583333333333333,0.9708333333333333,0.3125,,,coverage/all 240; errors/covered
+risk_threshold,0.6,action_error_rate,0.189873417721519,0.008583690987124463,-0.18128972673439453,,,coverage/all 240; errors/covered
+risk_threshold,0.6,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.65,coverage,0.6583333333333333,0.9666666666666667,0.30833333333333335,,,coverage/all 240; errors/covered
+risk_threshold,0.65,action_error_rate,0.189873417721519,0.004310344827586207,-0.18556307289393278,,,coverage/all 240; errors/covered
+risk_threshold,0.65,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.7,coverage,0.6583333333333333,0.9583333333333334,0.30000000000000004,,,coverage/all 240; errors/covered
+risk_threshold,0.7,action_error_rate,0.189873417721519,0.004347826086956522,-0.18552559163456248,,,coverage/all 240; errors/covered
+risk_threshold,0.7,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.75,coverage,0.6583333333333333,0.9416666666666667,0.2833333333333333,,,coverage/all 240; errors/covered
+risk_threshold,0.75,action_error_rate,0.189873417721519,0.0,-0.189873417721519,,,coverage/all 240; errors/covered
+risk_threshold,0.75,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.8,coverage,0.6583333333333333,0.9125,0.25416666666666665,,,coverage/all 240; errors/covered
+risk_threshold,0.8,action_error_rate,0.189873417721519,0.0,-0.189873417721519,,,coverage/all 240; errors/covered
+risk_threshold,0.8,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.85,coverage,0.6583333333333333,0.8916666666666667,0.2333333333333334,,,coverage/all 240; errors/covered
+risk_threshold,0.85,action_error_rate,0.189873417721519,0.0,-0.189873417721519,,,coverage/all 240; errors/covered
+risk_threshold,0.85,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.9,coverage,0.6583333333333333,0.8875,0.22916666666666663,,,coverage/all 240; errors/covered
+risk_threshold,0.9,action_error_rate,0.189873417721519,0.0,-0.189873417721519,,,coverage/all 240; errors/covered
+risk_threshold,0.9,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.92,coverage,0.6583333333333333,0.8833333333333333,0.22499999999999998,,,coverage/all 240; errors/covered
+risk_threshold,0.92,action_error_rate,0.189873417721519,0.0,-0.189873417721519,,,coverage/all 240; errors/covered
+risk_threshold,0.92,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.94,coverage,0.6583333333333333,0.8666666666666667,0.20833333333333337,,,coverage/all 240; errors/covered
+risk_threshold,0.94,action_error_rate,0.189873417721519,0.0,-0.189873417721519,,,coverage/all 240; errors/covered
+risk_threshold,0.94,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.95,coverage,0.6583333333333333,0.8333333333333334,0.17500000000000004,,,coverage/all 240; errors/covered
+risk_threshold,0.95,action_error_rate,0.189873417721519,0.0,-0.189873417721519,,,coverage/all 240; errors/covered
+risk_threshold,0.95,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.96,coverage,0.6583333333333333,0.775,0.1166666666666667,,,coverage/all 240; errors/covered
+risk_threshold,0.96,action_error_rate,0.189873417721519,0.0,-0.189873417721519,,,coverage/all 240; errors/covered
+risk_threshold,0.96,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.97,coverage,0.6583333333333333,0.7083333333333334,0.050000000000000044,,,coverage/all 240; errors/covered
+risk_threshold,0.97,action_error_rate,0.189873417721519,0.0,-0.189873417721519,,,coverage/all 240; errors/covered
+risk_threshold,0.97,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.98,coverage,0.6583333333333333,0.625,-0.033333333333333326,,,coverage/all 240; errors/covered
+risk_threshold,0.98,action_error_rate,0.189873417721519,0.0,-0.189873417721519,,,coverage/all 240; errors/covered
+risk_threshold,0.98,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered
+risk_threshold,0.99,coverage,0.6583333333333333,0.4375,-0.22083333333333333,,,coverage/all 240; errors/covered
+risk_threshold,0.99,action_error_rate,0.189873417721519,0.0,-0.189873417721519,,,coverage/all 240; errors/covered
+risk_threshold,0.99,unsafe_error_rate,0.0,0.0,0.0,,,coverage/all 240; errors/covered

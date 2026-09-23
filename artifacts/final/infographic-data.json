@@ -1,0 +1,408 @@
+{
+  "context": {
+    "action_labels": [
+      "REFUND",
+      "RESHIP",
+      "REQUEST INFO",
+      "WAIT",
+      "ESCALATE"
+    ],
+    "category_labels": [
+      "normal",
+      "multi-tool",
+      "boundaries",
+      "missing info",
+      "conflicting evidence",
+      "prompt injection",
+      "tool failures",
+      "tool selection"
+    ],
+    "frozen_cases": 240,
+    "gold_actions": 5,
+    "jev_model": "Jev 1.13.0",
+    "scored_executions": 480,
+    "source": "EXPERIMENT.md#Dataset; summary.json#/integrity",
+    "stress_categories": 8,
+    "systems": 2,
+    "terra_model": "GPT-5.6 Terra"
+  },
+  "limits": {
+    "repeatability_executed": false,
+    "scored_records_affected_by_missing_attempt_evidence": 0,
+    "source": "summary.json#/infrastructure; artifacts/cp14/integrity-audit.json",
+    "terra_decision_timeouts": 69,
+    "unscored_interrupted_jev_attempts": 1
+  },
+  "metrics": {
+    "accuracy": {
+      "ci95_lower": 0.3833333333333333,
+      "ci95_upper": 0.5083333333333333,
+      "denominator": 240,
+      "paired_difference": 0.4458333333333333,
+      "source": "summary.json#/systems/*/correctness; /paired_effects/accuracy",
+      "terra_jev_count": 235,
+      "terra_jev_rate": 0.9791666666666666,
+      "terra_only_count": 128,
+      "terra_only_rate": 0.5333333333333333
+    },
+    "ece": {
+      "source": "summary.json#/systems/*/calibration",
+      "terra_jev": 0.03340264570390094,
+      "terra_jev_valid_count": 239,
+      "terra_only": 0.18974683544303794,
+      "terra_only_valid_count": 158
+    },
+    "high_confidence_wrong": {
+      "source": "summary.json#/systems/*/calibration/high_confidence/0.9; CP-14 records",
+      "terra_jev_count": 213,
+      "terra_jev_rate": 0.0,
+      "terra_jev_wrong": 0,
+      "terra_only_count": 158,
+      "terra_only_rate": 0.189873417721519,
+      "terra_only_wrong": 30,
+      "threshold": 0.9
+    },
+    "median_decision_latency": {
+      "source": "summary.json#/systems/*/efficiency/decision_latency_p50_ms",
+      "terra_jev_seconds": 1.3366543999999998,
+      "terra_only_over_jev": 12.955018627103613,
+      "terra_only_seconds": 17.31638265
+    },
+    "normalized_decision_cost_per_1000": {
+      "source": "summary.json#/systems/*/efficiency/normalized_cost_per_1000_cases_usd",
+      "terra_jev_usd": 0.10624565,
+      "terra_only_over_jev": 197.31192131944542,
+      "terra_only_usd": 20.963533333333334
+    },
+    "read_calls_per_case": {
+      "difference": 0.9583333333333335,
+      "source": "summary.json#/systems/*/tools/mean_model_requested_reads",
+      "terra_jev": 2.6375,
+      "terra_only": 1.6791666666666667
+    },
+    "unsafe": {
+      "denominator": 240,
+      "source": "summary.json#/systems/*/correctness",
+      "terra_jev_count": 0,
+      "terra_only_count": 0
+    }
+  },
+  "poster": {
+    "aspect_ratio": "4:5",
+    "height_px": 2000,
+    "methodology": "Deterministic policy oracle; prompts, policy, tools, thresholds and provider versions frozen before test inference.",
+    "width_px": 1600
+  },
+  "risk_coverage": {
+    "axis_coverage_ticks": [
+      0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "axis_error_ticks": [
+      0,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25
+    ],
+    "max_observed_action_error_rate": 0.02,
+    "method_note": "Offline confidence gate; tied scores kept together; invalid distributions uncovered.",
+    "source": "summary.json#/systems/*/coverage",
+    "terra_jev_action_error_count": 4,
+    "terra_jev_action_error_rate": 0.016736401673640166,
+    "terra_jev_coverage": 0.9958333333333333,
+    "terra_jev_covered_count": 239,
+    "terra_jev_curve": [
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.0875,
+        "covered_count": 21,
+        "threshold": 1.0,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.4375,
+        "covered_count": 105,
+        "threshold": 0.99,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.625,
+        "covered_count": 150,
+        "threshold": 0.98,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.7083333333333334,
+        "covered_count": 170,
+        "threshold": 0.97,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.775,
+        "covered_count": 186,
+        "threshold": 0.96,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.8333333333333334,
+        "covered_count": 200,
+        "threshold": 0.95,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.85,
+        "covered_count": 204,
+        "threshold": 0.9400000000000001,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.8666666666666667,
+        "covered_count": 208,
+        "threshold": 0.94,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.8791666666666667,
+        "covered_count": 211,
+        "threshold": 0.93,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.8833333333333333,
+        "covered_count": 212,
+        "threshold": 0.92,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.8875,
+        "covered_count": 213,
+        "threshold": 0.9,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.8916666666666667,
+        "covered_count": 214,
+        "threshold": 0.89,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.9,
+        "covered_count": 216,
+        "threshold": 0.84,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.9041666666666667,
+        "covered_count": 217,
+        "threshold": 0.82,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.9125,
+        "covered_count": 219,
+        "threshold": 0.8,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.9208333333333333,
+        "covered_count": 221,
+        "threshold": 0.78,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.9291666666666667,
+        "covered_count": 223,
+        "threshold": 0.77,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.9333333333333333,
+        "covered_count": 224,
+        "threshold": 0.76,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 0,
+        "action_error_rate": 0.0,
+        "coverage": 0.9416666666666667,
+        "covered_count": 226,
+        "threshold": 0.75,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 1,
+        "action_error_rate": 0.004366812227074236,
+        "coverage": 0.9541666666666667,
+        "covered_count": 229,
+        "threshold": 0.74,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 1,
+        "action_error_rate": 0.004347826086956522,
+        "coverage": 0.9583333333333334,
+        "covered_count": 230,
+        "threshold": 0.72,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 1,
+        "action_error_rate": 0.004329004329004329,
+        "coverage": 0.9625,
+        "covered_count": 231,
+        "threshold": 0.6767676767676767,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 1,
+        "action_error_rate": 0.004310344827586207,
+        "coverage": 0.9666666666666667,
+        "covered_count": 232,
+        "threshold": 0.66,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 2,
+        "action_error_rate": 0.008583690987124463,
+        "coverage": 0.9708333333333333,
+        "covered_count": 233,
+        "threshold": 0.63,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 2,
+        "action_error_rate": 0.008547008547008548,
+        "coverage": 0.975,
+        "covered_count": 234,
+        "threshold": 0.58,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 2,
+        "action_error_rate": 0.00851063829787234,
+        "coverage": 0.9791666666666666,
+        "covered_count": 235,
+        "threshold": 0.57,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 3,
+        "action_error_rate": 0.012658227848101266,
+        "coverage": 0.9875,
+        "covered_count": 237,
+        "threshold": 0.56,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 4,
+        "action_error_rate": 0.016736401673640166,
+        "coverage": 0.9958333333333333,
+        "covered_count": 239,
+        "threshold": 0.52,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      }
+    ],
+    "terra_only_coverage": 0.0,
+    "terra_only_covered_count": 0,
+    "terra_only_curve": [
+      {
+        "action_error_count": 29,
+        "action_error_rate": 0.1858974358974359,
+        "coverage": 0.65,
+        "covered_count": 156,
+        "threshold": 1.0,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      },
+      {
+        "action_error_count": 30,
+        "action_error_rate": 0.189873417721519,
+        "coverage": 0.6583333333333333,
+        "covered_count": 158,
+        "threshold": 0.99,
+        "unsafe_error_count": 0,
+        "unsafe_error_rate": 0.0
+      }
+    ]
+  },
+  "scope": "Completed CP-14 frozen primary records only; no new provider calls",
+  "sources": {
+    "completed_record_checksums_verified": true,
+    "cp14_audit": "artifacts/cp14/integrity-audit.json",
+    "cp14_audit_sha256": "592dadaf712480fe37987557597df843af8c799cdd1bf613688067663ce8d29f",
+    "freeze_tag": "v1.0.1-freeze",
+    "freeze_verified": true,
+    "records": "artifacts/runs/primary-v1/records.jsonl",
+    "records_sha256": "c4a6f1e8f1bcb39da9ee41dcae514a3d38e1cd3c2abb4eac4052d6c58f4102c2",
+    "summary": "artifacts/final/summary.json",
+    "summary_sha256": "d4cef11db82925fceab642271f9f1578fc4db1b98ff538c2d8b03935c1574060"
+  }
+}

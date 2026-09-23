@@ -29,7 +29,8 @@
   "limits": {
     "repeatability_executed": false,
     "scored_records_affected_by_missing_attempt_evidence": 0,
-    "source": "summary.json#/infrastructure; artifacts/cp14/integrity-audit.json",
+    "source": "summary.json#/infrastructure; artifacts/cp14/integrity-audit.json; artifacts/runs/primary-v1/resume_primary.py:100",
+    "terra_decision_timeout_seconds": 120,
     "terra_decision_timeouts": 69,
     "unscored_interrupted_jev_attempts": 1
   },

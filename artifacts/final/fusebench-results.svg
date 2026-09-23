@@ -115,15 +115,15 @@ z
 " clip-path="url(#p5d03519ee2)" style="fill: #dcefe8"/>
    </g>
    <g id="patch_9">
-    <path d="M 45.9 824.4
-L 674.1 824.4
-Q 679.5 824.4 679.5 829.8
-L 679.5 846
-Q 679.5 851.4 674.1 851.4
-L 45.9 851.4
-Q 40.5 851.4 40.5 846
-L 40.5 829.8
-Q 40.5 824.4 45.9 824.4
+    <path d="M 218.7 833.85
+L 501.3 833.85
+Q 506.7 833.85 506.7 839.25
+L 506.7 888.3
+Q 506.7 893.7 501.3 893.7
+L 218.7 893.7
+Q 213.3 893.7 213.3 888.3
+L 213.3 839.25
+Q 213.3 833.85 218.7 833.85
 z
 " clip-path="url(#p5d03519ee2)" style="fill: #17262e"/>
    </g>
@@ -532,34 +532,64 @@ L 679.5 794.25
     <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #237568" x="42.3" y="809.910156" transform="rotate(-0 42.3 809.910156)">WHAT CHANGED WHEN JUDGMENT LEFT THE LLM?</text>
    </g>
    <g id="text_88">
-    <text style="font-weight: 700; font-size: 9.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="42.3" y="819.4815" transform="rotate(-0 42.3 819.4815)">Accuracy rose. Confidence gates covered more cases. Decisions sped up and cost less — but used more reads.</text>
+    <text style="font-weight: 700; font-size: 9.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="42.3" y="819.727469" transform="rotate(-0 42.3 819.727469)">The result wasn’t “Jev is a better LLM.”</text>
    </g>
    <g id="text_89">
-    <text style="font-weight: 700; font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #a8dcc9" x="51.75" y="836.975266" transform="rotate(-0 51.75 836.975266)">A POSSIBLE PRODUCTION-AGENT PATTERN</text>
+    <text style="font-weight: 700; font-size: 9.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="42.3" y="830.988563" transform="rotate(-0 42.3 830.988563)">It was that the LLM didn’t need to own the bounded decision at all.</text>
    </g>
    <g id="text_90">
-    <text style="font-weight: 700; font-size: 9.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #fffefa" x="51.75" y="848.7315" transform="rotate(-0 51.75 848.7315)">LLM: understand + generate    →    Jev: bounded judgment    →    code: policy + actions + escalation</text>
+    <text style="font-weight: 700; font-size: 8.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #237568" x="42.3" y="844.363063" transform="rotate(-0 42.3 844.363063)">WHEN TO USE IT</text>
    </g>
    <g id="text_91">
-    <text style="font-weight: 700; font-size: 8.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #237568" x="42.3" y="865.063063" transform="rotate(-0 42.3 865.063063)">WHEN TO USE IT</text>
+    <text style="font-size: 7.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="42.3" y="855.642938" transform="rotate(-0 42.3 855.642938)">Finite actions • observable state</text>
    </g>
    <g id="text_92">
-    <text style="font-size: 8.1px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="42.3" y="874.492594" transform="rotate(-0 42.3 874.492594)">Finite actions • observable state • costly mistakes • human fallback</text>
+    <text style="font-size: 7.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="42.3" y="864.337313" transform="rotate(-0 42.3 864.337313)">Costly mistakes • human fallback</text>
    </g>
    <g id="text_93">
-    <text style="font-size: 8.1px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="42.3" y="885.292594" transform="rotate(-0 42.3 885.292594)">Refunds, routing, approvals. Skip coding, research, open planning.</text>
+    <text style="font-size: 7.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="42.3" y="873.787312" transform="rotate(-0 42.3 873.787312)">Refunds, routing, approvals.</text>
    </g>
    <g id="text_94">
-    <text style="font-weight: 700; font-size: 8.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #237568" x="369" y="865.063063" transform="rotate(-0 369 865.063063)">HONEST LIMITS</text>
+    <text style="font-size: 7.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="42.3" y="883.237313" transform="rotate(-0 42.3 883.237313)">Not coding, research, open planning.</text>
    </g>
    <g id="text_95">
-    <text style="font-size: 7.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="369" y="874.237313" transform="rotate(-0 369 874.237313)">One GPT-5.6 Terra • synthetic domain • 69 timeouts</text>
+    <text style="font-weight: 700; font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #a8dcc9" x="224.1" y="847.587469" transform="rotate(-0 224.1 847.587469)">THE PATTERN THIS RESULT SUGGESTS</text>
    </g>
    <g id="text_96">
-    <text style="font-size: 7.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="369" y="884.137313" transform="rotate(-0 369 884.137313)">No repeatability; no claim for all models or agents.</text>
+    <text style="font-weight: 700; font-size: 9.2px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #fffefa" x="360" y="860.092688" transform="rotate(-0 360 860.092688)">LLM: understand + generate</text>
    </g>
    <g id="text_97">
-    <text style="font-size: 7.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="369" y="894.037312" transform="rotate(-0 369 894.037312)">1 unscored interrupted Jev attempt lacked raw evidence; 0/480 affected.</text>
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #a8dcc9" x="360" y="870.678125" transform="rotate(-0 360 870.678125)">↓</text>
+   </g>
+   <g id="text_98">
+    <text style="font-weight: 700; font-size: 9.2px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #fffefa" x="360" y="876.292688" transform="rotate(-0 360 876.292688)">Jev: bounded judgment</text>
+   </g>
+   <g id="text_99">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #a8dcc9" x="360" y="886.878125" transform="rotate(-0 360 886.878125)">↓</text>
+   </g>
+   <g id="text_100">
+    <text style="font-weight: 700; font-size: 9.2px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #fffefa" x="360" y="892.492687" transform="rotate(-0 360 892.492687)">Code: policy + actions + escalation</text>
+   </g>
+   <g id="text_101">
+    <text style="font-weight: 700; font-size: 8.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #237568" x="517.5" y="841.663063" transform="rotate(-0 517.5 841.663063)">HONEST LIMITS</text>
+   </g>
+   <g id="text_102">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="517.5" y="849.317125" transform="rotate(-0 517.5 849.317125)">One GPT-5.6 Terra; synthetic domain.</text>
+   </g>
+   <g id="text_103">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="517.5" y="858.317125" transform="rotate(-0 517.5 858.317125)">69 Terra-only decision turns reached</text>
+   </g>
+   <g id="text_104">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="517.5" y="867.317125" transform="rotate(-0 517.5 867.317125)">the 120 s provider timeout.</text>
+   </g>
+   <g id="text_105">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="517.5" y="876.317125" transform="rotate(-0 517.5 876.317125)">No repeatability; no broad claim.</text>
+   </g>
+   <g id="text_106">
+    <text style="font-size: 7.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="517.5" y="884.97675" transform="rotate(-0 517.5 884.97675)">1 unscored interrupted Jev attempt; raw missing.</text>
+   </g>
+   <g id="text_107">
+    <text style="font-size: 7.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #17262e" x="517.5" y="894.391313" transform="rotate(-0 517.5 894.391313)">0/480 scored records affected.</text>
    </g>
    <g id="PathCollection_1">
     <defs>

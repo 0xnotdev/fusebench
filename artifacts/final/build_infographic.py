@@ -69,6 +69,9 @@ def _calculate_data() -> dict:
         raise RuntimeError("poster source is not CP-14-only local analysis")
     if audit["integrity"]["orphan_jev_input_tokens"] != 2506:
         raise RuntimeError("CP-14 audit exception changed")
+    timeout_source = ROOT / "artifacts" / "runs" / "primary-v1" / "resume_primary.py"
+    if "turn_timeout_seconds=120.0" not in timeout_source.read_text(encoding="utf-8"):
+        raise RuntimeError("Terra decision provider timeout setting changed")
 
     systems = summary["systems"]
     t, j = systems["terra_only"], systems["terra_jev"]
@@ -203,10 +206,11 @@ def _calculate_data() -> dict:
         },
         "limits": {
             "terra_decision_timeouts": summary["infrastructure"]["terra_only_decision_timeouts"],
+            "terra_decision_timeout_seconds": 120,
             "repeatability_executed": False,
             "unscored_interrupted_jev_attempts": 1,
             "scored_records_affected_by_missing_attempt_evidence": 0,
-            "source": "summary.json#/infrastructure; artifacts/cp14/integrity-audit.json",
+            "source": "summary.json#/infrastructure; artifacts/cp14/integrity-audit.json; artifacts/runs/primary-v1/resume_primary.py:100",
         },
         "poster": {
             "width_px": W,
@@ -246,11 +250,13 @@ def _verify_data() -> dict:
 
 
 def _render(data: dict) -> None:
-    plt.rcParams.update({
-        "font.family": "DejaVu Sans",
-        "svg.fonttype": "none",
-        "svg.hashsalt": "fusebench-cp14",
-    })
+    plt.rcParams.update(
+        {
+            "font.family": "DejaVu Sans",
+            "svg.fonttype": "none",
+            "svg.hashsalt": "fusebench-cp14",
+        }
+    )
     fig = plt.figure(figsize=(10, 12.5), dpi=160, facecolor=PAPER)
     ax = fig.add_axes((0, 0, 1, 1))
     ax.set_xlim(0, W)
@@ -535,37 +541,54 @@ def _render(data: dict) -> None:
     txt(
         94,
         1803,
-        "Accuracy rose. Confidence gates covered more cases. Decisions sped up and cost less — but used more reads.",
-        9.6,
+        "The result wasn’t “Jev is a better LLM.”",
+        9.8,
         "bold",
     )
-    box(90, 1832, 1420, 60, INK, radius=12)
-    txt(115, 1842, "A POSSIBLE PRODUCTION-AGENT PATTERN", 8.6, "bold", "#a8dcc9")
     txt(
-        115,
-        1868,
-        "LLM: understand + generate    →    Jev: bounded judgment    →    code: policy + actions + escalation",
-        9.6,
-        "bold",
-        WHITE,
+        94, 1826, "It was that the LLM didn’t need to own the bounded decision at all.", 9.8, "bold"
     )
 
-    txt(94, 1904, "WHEN TO USE IT", 8.8, "bold", GREEN)
-    txt(94, 1928, "Finite actions • observable state • costly mistakes • human fallback", 8.1)
-    txt(94, 1952, "Refunds, routing, approvals. Skip coding, research, open planning.", 8.1)
-    txt(820, 1904, "HONEST LIMITS", 8.8, "bold", GREEN)
+    txt(94, 1858, "WHEN TO USE IT", 8.8, "bold", GREEN)
+    txt(94, 1885, "Finite actions • observable state", 7.8)
+    txt(94, 1906, "Costly mistakes • human fallback", 7.8)
+    txt(94, 1927, "Refunds, routing, approvals.", 7.8)
+    txt(94, 1948, "Not coding, research, open planning.", 7.8)
+
+    box(474, 1853, 652, 133, INK, radius=12)
+    txt(498, 1866, "THE PATTERN THIS RESULT SUGGESTS", 8.4, "bold", "#a8dcc9")
+    txt(800, 1894, "LLM: understand + generate", 9.2, "bold", WHITE, ha="center")
+    txt(800, 1914, "↓", 10, "bold", "#a8dcc9", ha="center")
+    txt(800, 1930, "Jev: bounded judgment", 9.2, "bold", WHITE, ha="center")
+    txt(800, 1950, "↓", 10, "bold", "#a8dcc9", ha="center")
+    txt(800, 1966, "Code: policy + actions + escalation", 9.2, "bold", WHITE, ha="center")
+
+    txt(1150, 1852, "HONEST LIMITS", 8.8, "bold", GREEN)
+    txt(1150, 1873, f"One {c['terra_model']}; synthetic domain.", 7.6)
     txt(
-        820,
-        1928,
-        f"One {c['terra_model']} • synthetic domain • {limits['terra_decision_timeouts']} timeouts",
-        7.8,
+        1150,
+        1893,
+        f"{limits['terra_decision_timeouts']} Terra-only decision turns reached",
+        7.6,
     )
-    txt(820, 1950, "No repeatability; no claim for all models or agents.", 7.8)
     txt(
-        820,
-        1972,
-        f"{limits['unscored_interrupted_jev_attempts']} unscored interrupted Jev attempt lacked raw evidence; {limits['scored_records_affected_by_missing_attempt_evidence']}/{c['scored_executions']} affected.",
-        7.8,
+        1150,
+        1913,
+        f"the {limits['terra_decision_timeout_seconds']} s provider timeout.",
+        7.6,
+    )
+    txt(1150, 1933, "No repeatability; no broad claim.", 7.6)
+    txt(
+        1150,
+        1953,
+        f"{limits['unscored_interrupted_jev_attempts']} unscored interrupted Jev attempt; raw missing.",
+        7.2,
+    )
+    txt(
+        1150,
+        1973,
+        f"{limits['scored_records_affected_by_missing_attempt_evidence']}/{c['scored_executions']} scored records affected.",
+        7.2,
     )
 
     png = OUT / "fusebench-results.png"
@@ -573,8 +596,7 @@ def _render(data: dict) -> None:
     fig.savefig(png, dpi=160, facecolor=PAPER, pad_inches=0)
     fig.savefig(svg, facecolor=PAPER, pad_inches=0, metadata={"Date": None})
     svg.write_text(
-        "\n".join(line.rstrip() for line in svg.read_text(encoding="utf-8").splitlines())
-        + "\n",
+        "\n".join(line.rstrip() for line in svg.read_text(encoding="utf-8").splitlines()) + "\n",
         encoding="utf-8",
     )
     plt.close(fig)

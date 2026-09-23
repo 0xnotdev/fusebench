@@ -28,6 +28,18 @@ ORANGE = "#c95837"
 GREEN = "#236e63"
 
 
+def calibration_summary(data: dict) -> tuple[str, str]:
+    """Format the two headline calibration comparisons from verified metrics."""
+    ece = data["metrics"]["ece"]
+    confident = data["metrics"]["high_confidence_wrong"]
+    return (
+        f"ECE: {ece['terra_only']:.3f} → {ece['terra_jev']:.3f}",
+        "Wrong at ≥90% confidence: "
+        f"{confident['terra_only_wrong']}/{confident['terra_only_count']} → "
+        f"{confident['terra_jev_wrong']}/{confident['terra_jev_count']}",
+    )
+
+
 def render_social_report(data: dict, figures: dict[str, Path], output: Path) -> None:
     """Place all three source figures at legible scale in one social canvas."""
     required = ("risk_coverage", "calibration", "latency_cost")
@@ -129,53 +141,58 @@ def render_social_report(data: dict, figures: dict[str, Path], output: Path) -> 
     # Evidence 01: the largest panel carries the risk/coverage result.
     label(120, 936, "01   /   RISK–COVERAGE", 18, color=GREEN, weight="bold")
     label(120, 996, "How much can confidence-gating automate?", 23, weight="bold")
-    source_figure("risk_coverage", 112, 1088, 1390, 818)
-    label(1570, 1092, "TERRA + JEV", 16, color=ORANGE, weight="bold")
-    label(1565, 1138, f"{risk['terra_jev_coverage']:.1%}", 58, color=ORANGE, weight="bold")
-    label(1570, 1310, f"{risk['terra_jev_covered_count']}/240 cases", 24, weight="bold")
-    label(1570, 1384, "covered at ≤2% observed", 19, color=MUTED)
-    label(1570, 1440, "action error", 19, color=MUTED)
-    ax.plot((1570, 2240), (1530, 1530), color=LINE, lw=1.1)
-    label(1570, 1572, "Terra-only", 17, color=BLUE, weight="bold")
-    label(1570, 1630, "No attainable confidence gate", 19)
-    label(1570, 1682, "met the same error cap.", 19)
-    rule(1934)
+    source_figure("risk_coverage", 112, 1088, 1240, 730)
+    label(1435, 1092, "TERRA + JEV", 16, color=ORANGE, weight="bold")
+    label(1430, 1138, f"{risk['terra_jev_coverage']:.1%}", 58, color=ORANGE, weight="bold")
+    label(1435, 1310, f"{risk['terra_jev_covered_count']}/240 cases", 24, weight="bold")
+    label(1435, 1384, "covered at ≤2% observed", 19, color=MUTED)
+    label(1435, 1440, "action error", 19, color=MUTED)
+    ax.plot((1435, 2240), (1530, 1530), color=LINE, lw=1.1)
+    label(1435, 1572, "Terra-only", 17, color=BLUE, weight="bold")
+    label(1435, 1630, "No attainable confidence gate", 19)
+    label(1435, 1682, "met the same error cap.", 19)
+    rule(1850)
 
     # Evidence 02/03: figures stay intact; large annotations remain readable in-feed.
-    label(120, 1976, "02   /   CALIBRATION", 18, color=GREEN, weight="bold")
-    label(1275, 1976, "03   /   DECISION EFFICIENCY", 18, color=GREEN, weight="bold")
-    source_figure("calibration", 112, 2040, 1060, 814)
-    source_figure("latency_cost", 1255, 2070, 1040, 400)
+    label(120, 1890, "02   /   CALIBRATION", 18, color=GREEN, weight="bold")
+    label(1275, 1890, "03   /   DECISION EFFICIENCY", 18, color=GREEN, weight="bold")
+    source_figure("calibration", 112, 1940, 870, 670)
+    source_figure("latency_cost", 1255, 1960, 1040, 400)
+    ece_summary, confident_summary = calibration_summary(data)
+    label(120, 2635, ece_summary, 21, weight="bold")
+    label(120, 2695, confident_summary, 16, weight="bold")
     label(
         1280,
-        2520,
+        2405,
         f"{latency['terra_only_seconds']:.2f} → {latency['terra_jev_seconds']:.2f} s",
         33,
         weight="bold",
     )
-    label(1282, 2630, "Median decision-path latency", 16, color=MUTED)
+    label(1282, 2495, "Median decision-path latency", 16, color=MUTED)
     label(
         1280,
-        2700,
+        2560,
         f"\\${cost['terra_only_usd']:.2f} → \\${cost['terra_jev_usd']:.3f}",
         27,
         weight="bold",
     )
-    label(1282, 2780, "Normalized decision cost / 1,000 cases", 16, color=MUTED)
+    label(1282, 2640, "Normalized decision cost / 1,000 cases", 16, color=MUTED)
 
-    rule(2870)
     label(
         120,
-        2890,
-        "240 paired cases  •  480 scored executions  •  same policy, tools and environment",
+        2770,
+        "Separating bounded judgment from the general-purpose LLM\n"
+        "improved accuracy, confidence-gating, latency, and decision cost\n"
+        "— at the expense of more read calls.",
         15,
-        color=MUTED,
+        weight="bold",
     )
+    rule(2920)
     label(
         120,
-        2947,
-        "Primary scores include Terra decision timeouts. "
-        "Decision metrics exclude the shared responder.",
+        2943,
+        "240 paired cases • 480 scored • same policy/tools • Terra timeouts included • "
+        "shared responder excluded from decision metrics",
         12,
         color=MUTED,
     )

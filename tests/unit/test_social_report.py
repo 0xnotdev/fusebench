@@ -55,3 +55,13 @@ def test_social_report_rejects_missing_source_figure(tmp_path: Path) -> None:
 
     with pytest.raises(FileNotFoundError, match="calibration"):
         report.render_social_report(data, figures, tmp_path / "report.png")
+
+
+def test_calibration_summary_uses_frozen_valid_output_denominators() -> None:
+    report = _report_module()
+    data = json.loads((ROOT / "artifacts/final/infographic-data.json").read_text(encoding="utf-8"))
+
+    assert report.calibration_summary(data) == (
+        "ECE: 0.190 → 0.033",
+        "Wrong at ≥90% confidence: 30/158 → 0/213",
+    )

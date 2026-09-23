@@ -437,6 +437,49 @@ def _full_system_secondary(records: list[RunRecord]) -> dict:
     return by_system
 
 
+def _risk_coverage_figure(summary: dict):
+    """Show the operational low-error region and the off-scale Terra-only result."""
+    from matplotlib.ticker import PercentFormatter
+
+    fig, ax = plt.subplots(figsize=(8.5, 5), constrained_layout=True)
+    jev = summary["systems"]["terra_jev"]["coverage"]["continuous_tie_aware"]
+    terra = summary["systems"]["terra_only"]["coverage"]["continuous_tie_aware"]
+    ax.plot(
+        [point["coverage"] for point in jev],
+        [point["action_error_rate"] for point in jev],
+        label="Terra + Jev",
+        color=COLORS["terra_jev"],
+        linewidth=3,
+    )
+    ax.axhline(0.02, color="#8d9699", linewidth=1.4, linestyle="--", label="2% error cap")
+    ax.set(
+        xlim=(0, 1),
+        ylim=(0, 0.05),
+        xlabel="Fraction of all 240 cases covered",
+        ylabel="Action error among covered cases",
+        title="Confidence-gated decision coverage",
+    )
+    ax.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
+    ax.grid(alpha=0.15)
+    ax.legend(frameon=False, loc="upper right")
+
+    inset = ax.inset_axes((0.07, 0.50, 0.38, 0.38))
+    inset.plot(
+        [point["coverage"] for point in terra],
+        [point["action_error_rate"] for point in terra],
+        color=COLORS["terra_only"],
+        linewidth=2,
+        marker="o",
+    )
+    inset.set(xlim=(0.63, 0.67), ylim=(0.15, 0.21), title="Terra-only (off main scale)")
+    inset.xaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
+    inset.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
+    inset.tick_params(labelsize=8)
+    inset.title.set_fontsize(9)
+    inset.grid(alpha=0.15)
+    return fig, ax
+
+
 def _plots(summary: dict) -> list[str]:
     plt.rcParams.update(
         {
@@ -451,36 +494,7 @@ def _plots(summary: dict) -> list[str]:
     )
     names = []
 
-    fig, ax = plt.subplots(figsize=(8.5, 5), constrained_layout=True)
-    for system in SYSTEMS:
-        points = summary["systems"][system]["coverage"]["continuous_tie_aware"]
-        coverage = [p["coverage"] for p in points]
-        action = [p["action_error_rate"] for p in points]
-        ax.plot(
-            coverage,
-            action,
-            label=LABELS[system],
-            color=COLORS[system],
-            linewidth=2.5,
-            marker="o" if system == "terra_only" else None,
-        )
-    ax.set(
-        xlim=(0, 1),
-        ylim=(-0.005, 0.30),
-        xlabel="Fraction of all 240 cases covered",
-        ylabel="Action error among covered cases",
-        title="Confidence-gated decision coverage",
-    )
-    ax.grid(alpha=0.15)
-    ax.legend(frameon=False)
-    ax.text(
-        0.02,
-        0.27,
-        "Tied scores stay together; invalid outputs have no coverage.\n"
-        "Both systems: 0 observed unsafe autonomous actions.",
-        fontsize=9,
-        va="top",
-    )
+    fig, _ = _risk_coverage_figure(summary)
     path = OUT / "risk_coverage.png"
     fig.savefig(path, dpi=240)
     plt.close(fig)
